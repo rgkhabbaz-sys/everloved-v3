@@ -6,6 +6,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: var(--background);
 }
 
 .backgroundWrapper {
@@ -19,32 +20,20 @@
 
 .backgroundImage {
   object-fit: cover;
-  filter: grayscale(100%) contrast(1.1);
-  animation: breathe 10s infinite ease-in-out;
+  transition: transform 10s ease-in-out;
 }
 
-@keyframes breathe {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
+/* Vignette Effect */
 .overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
+  background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
   z-index: 1;
+  pointer-events: none;
 }
 
 .content {
@@ -53,94 +42,78 @@
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 2rem 2rem var(--nav-height) 2rem;
+  justify-content: flex-end;
+  /* Push controls to bottom */
+  padding-bottom: 120px;
+  /* Space for floating nav */
 }
 
 .frame {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4rem;
-}
-
-/* Corner markers */
-.cornerTL,
-.cornerTR,
-.cornerBL,
-.cornerBR {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-}
-
-.cornerTL {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-
-.cornerTR {
-  top: 0;
-  right: 0;
-  border-left: none;
-  border-bottom: none;
-}
-
-.cornerBL {
-  bottom: 0;
-  left: 0;
-  border-right: none;
-  border-top: none;
-}
-
-.cornerBR {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
+  /* Removed rigid frame for organic feel */
+  display: contents;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 300;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.9);
-  margin-top: 1rem;
+  display: none;
+  /* Hide title on immersive view */
 }
 
 .centerImageContainer {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  z-index: -1;
+  /* Behind controls */
 }
 
 .avatarPlaceholder {
-  width: 60%;
-  height: 60%;
-  position: relative;
-  /* In a real app, this would be the avatar. 
-     For now, relying on the background image to provide the face as per the design mockup */
+  width: 100%;
+  height: 100%;
 }
 
+.avatarSpeaking {
+  animation: gentle-pulse 2s infinite ease-in-out;
+}
+
+@keyframes gentle-pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Pulse Mic Button */
 .micContainer {
   position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--primary);
+  /* Sage Green */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
   cursor: pointer;
-  transition: transform 0.2s;
+  box-shadow: 0 10px 30px rgba(124, 144, 130, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 20;
+}
+
+.micContainer:hover {
+  transform: scale(1.05);
+  background: #6b7f71;
+  /* Darker Sage */
 }
 
 .micContainer:active {
@@ -148,57 +121,49 @@
 }
 
 .micIcon {
-  color: rgba(255, 255, 255, 0.9);
+  color: #fff;
   z-index: 2;
+}
+
+/* Ripple Animation for Active State */
+.micActive {
+  background: var(--accent);
+  /* Clay/Terracotta for active recording */
+  animation: none;
 }
 
 .micGlow {
   position: absolute;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
-  animation: pulse 2s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
-
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(0.8);
-    opacity: 0.5;
-  }
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  z-index: -1;
+  opacity: 0.6;
 }
 
 .micActive .micGlow {
-  background: radial-gradient(circle, rgba(74, 222, 128, 0.4) 0%, rgba(74, 222, 128, 0) 70%);
-  animation: pulseActive 1.5s infinite ease-in-out;
+  animation: ripple 1.5s infinite cubic-bezier(0, 0, 0.2, 1);
 }
 
-.micIconActive {
-  color: #4ade80;
-}
-
-@keyframes pulseActive {
+@keyframes ripple {
   0% {
-    transform: scale(0.9);
+    transform: scale(1);
     opacity: 0.6;
-  }
-
-  50% {
-    transform: scale(1.4);
-    opacity: 1;
   }
 
   100% {
-    transform: scale(0.9);
-    opacity: 0.6;
+    transform: scale(2.5);
+    opacity: 0;
   }
+}
+
+/* Hide corner markers */
+.cornerTL,
+.cornerTR,
+.cornerBL,
+.cornerBR {
+  display: none;
 }

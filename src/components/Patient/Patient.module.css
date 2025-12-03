@@ -2,123 +2,214 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    /* Align to bottom */
     width: 100%;
     height: 100%;
     position: absolute;
     top: 0;
     left: 0;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.4);
-    /* Add subtle overlay to improve text contrast */
+    padding-bottom: 2rem;
+    /* Removed dark overlay for cleaner look */
 }
 
-.waveformContainer {
+/* Ripple Animation Container */
+.rippleContainer {
+    position: absolute;
+    bottom: 140px;
+    /* Position behind the mic button area */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    height: 60px;
-    margin-bottom: 2rem;
+    pointer-events: none;
+    z-index: -1;
 }
 
-.bar {
-    width: 6px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 99px;
-    animation: wave 1s ease-in-out infinite;
+.rippleListening,
+.rippleProcessing,
+.rippleSpeaking {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
 }
 
-.bar:nth-child(odd) {
-    animation-duration: 0.8s;
+.rippleListening {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--primary);
+    animation: ripple-out 2s infinite cubic-bezier(0, 0.2, 0.8, 1);
 }
 
-.bar:nth-child(2n) {
-    animation-duration: 1.1s;
+.rippleProcessing {
+    width: 80%;
+    height: 80%;
+    border: 2px solid #fbbf24;
+    /* Amber for thinking */
+    animation: spin-pulse 1.5s infinite linear;
 }
 
-.bar:nth-child(3n) {
-    animation-duration: 1.3s;
+.rippleSpeaking {
+    width: 100%;
+    height: 100%;
+    background: rgba(124, 144, 130, 0.2);
+    animation: breathe-soft 3s infinite ease-in-out;
 }
 
-.bar:nth-child(4n) {
-    animation-duration: 0.9s;
-}
+@keyframes ripple-out {
+    0% {
+        transform: scale(0.5);
+        opacity: 0.8;
+    }
 
-@keyframes wave {
-
-    0%,
     100% {
-        height: 10px;
-        opacity: 0.5;
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes spin-pulse {
+    0% {
+        transform: rotate(0deg) scale(1);
+        opacity: 0.6;
     }
 
     50% {
-        height: 40px;
-        opacity: 1;
+        transform: rotate(180deg) scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1);
+        opacity: 0.6;
     }
 }
 
+@keyframes breathe-soft {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.3;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(0.9);
+        opacity: 0.3;
+    }
+}
+
+/* Status Text */
 .statusText {
-    font-size: 1.2rem;
-    font-weight: 300;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 2rem;
-    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    min-height: 24px;
+}
+
+.statusLabel {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--foreground);
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Transcript */
+.transcriptContainer {
+    margin-bottom: 1rem;
+    max-width: 80%;
+    text-align: center;
+}
+
+.transcriptText {
+    font-family: 'Merriweather', serif;
+    font-size: 1.1rem;
+    color: var(--foreground);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 1rem 1.5rem;
+    border-radius: 20px 20px 20px 4px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: inline-block;
+}
+
+/* Buttons */
+.startButton {
+    background: var(--primary);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(124, 144, 130, 0.4);
+    transition: all 0.3s ease;
+}
+
+.startButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 144, 130, 0.5);
 }
 
 .endButton {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: 0.75rem 2rem;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--muted);
+    padding: 0.5rem 1.5rem;
     border-radius: 99px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
+    margin-top: 1rem;
 }
 
 .endButton:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--foreground);
 }
 
-/* Therapy Modes */
-.modesContainer {
+/* Error State */
+.errorContainer {
     display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    margin-bottom: 4rem;
-}
-
-.modeButton {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.5rem;
+}
+
+.errorMessage {
+    color: #ef4444;
     font-size: 0.9rem;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
 }
 
-.modeButton:hover {
-    background: rgba(255, 255, 255, 0.1);
+.retryButton {
+    background: var(--primary);
     color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
 }
 
-.activeMode {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
+/* Input Fallback */
 .inputContainer {
     width: 100%;
     max-width: 300px;
@@ -127,24 +218,25 @@
 
 .textInput {
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: var(--foreground);
     padding: 0.75rem 1rem;
-    border-radius: 12px;
+    border-radius: 20px;
     font-size: 0.9rem;
     backdrop-filter: blur(10px);
     outline: none;
     transition: all 0.3s ease;
     text-align: center;
+    font-family: 'Nunito', sans-serif;
 }
 
 .textInput:focus {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.9);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124, 144, 130, 0.2);
 }
 
 .textInput::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--muted);
 }

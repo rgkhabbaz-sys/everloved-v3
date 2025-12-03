@@ -1,13 +1,23 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Merriweather, Nunito } from 'next/font/google';
 import './globals.css';
 import NavBar from '@/components/Navigation/NavBar';
 
-const inter = Inter({ subsets: ['latin'] });
+const merriweather = Merriweather({
+  subsets: ['latin'],
+  weight: ['300', '400', '700', '900'],
+  variable: '--font-serif',
+});
+
+const nunito = Nunito({
+  subsets: ['latin'],
+  weight: ['300', '400', '600', '700'],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'EverLoved',
-  description: 'Therapeutic AI Platform for Dementia Care',
+  description: 'A Digital Sanctuary for Dementia Care',
 };
 
 export default function RootLayout({
@@ -17,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${nunito.className} ${merriweather.variable}`}>
         <NavBar />
         <main>{children}</main>
       </body>

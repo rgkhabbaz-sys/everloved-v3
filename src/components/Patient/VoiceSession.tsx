@@ -218,56 +218,49 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             {status === 'idle' && !error ? (
                 <button
                     onClick={startSession}
-                    className={styles.endButton}
-                    style={{ background: '#4ade80', color: 'black', fontWeight: 'bold' }}
+                    className={styles.startButton}
                 >
                     Start Conversation
                 </button>
             ) : (
                 <>
-                    <div className={styles.waveformContainer}>
-                        {barHeights.map((height, i) => (
-                            <div
-                                key={i}
-                                className={styles.bar}
-                                style={{
-                                    height: `${height}px`,
-                                    background: status === 'speaking' ? '#4ade80' : status === 'processing' ? '#fbbf24' : 'rgba(255,255,255,0.8)'
-                                }}
-                            />
-                        ))}
+                    {/* Soft Ripple Animation for Active State */}
+                    <div className={styles.rippleContainer}>
+                        {status === 'speaking' && <div className={styles.rippleSpeaking} />}
+                        {status === 'processing' && <div className={styles.rippleProcessing} />}
+                        {status === 'listening' && <div className={styles.rippleListening} />}
                     </div>
 
                     <p className={styles.statusText}>
                         {error ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', maxWidth: '90%' }}>
-                                <span style={{ color: '#ef4444', textAlign: 'center' }}>{error}</span>
+                            <div className={styles.errorContainer}>
+                                <span className={styles.errorMessage}>{error}</span>
                                 <button
                                     onClick={requestMicrophoneAccess}
-                                    style={{
-                                        background: '#4ade80', color: 'black', border: 'none',
-                                        padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer',
-                                        fontWeight: 600, fontSize: '0.8rem'
-                                    }}
+                                    className={styles.retryButton}
                                 >
                                     Force Enable Microphone
                                 </button>
                             </div>
                         ) : (
-                            <>
+                            <span className={styles.statusLabel}>
                                 {status === 'listening' && "Listening..."}
                                 {status === 'processing' && "Thinking..."}
                                 {status === 'speaking' && "Speaking..."}
-                            </>
+                            </span>
                         )}
                     </p>
-                    {!error && transcript && <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', maxWidth: '300px', textAlign: 'center' }}>"{transcript}"</p>}
+                    {!error && transcript && (
+                        <div className={styles.transcriptContainer}>
+                            <p className={styles.transcriptText}>"{transcript}"</p>
+                        </div>
+                    )}
 
                     <div className={styles.inputContainer}>
                         <input
                             type="text"
                             className={styles.textInput}
-                            placeholder="Or type a message..."
+                            placeholder="Type a message..."
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
                                     const target = e.target as HTMLInputElement;
