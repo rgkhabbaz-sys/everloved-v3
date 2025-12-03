@@ -1,141 +1,204 @@
-.page {
-  --background: #fafafa;
-  --foreground: #fff;
-
-  --text-primary: #000;
-  --text-secondary: #666;
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
-
+.container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
   display: flex;
-  min-height: 100vh;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-geist-sans);
-  background-color: var(--background);
 }
 
-.main {
+.backgroundWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.backgroundImage {
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.1);
+  animation: breathe 10s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6));
+  z-index: 1;
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
   display: flex;
-  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 2rem var(--nav-height) 2rem;
+}
+
+.frame {
+  position: relative;
   width: 100%;
   max-width: 800px;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  background-color: var(--foreground);
-  padding: 120px 60px;
-}
-
-.intro {
+  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  gap: 24px;
-}
-
-.intro h1 {
-  max-width: 320px;
-  font-size: 40px;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: -2.4px;
-  text-wrap: balance;
-  color: var(--text-primary);
-}
-
-.intro p {
-  max-width: 440px;
-  font-size: 18px;
-  line-height: 32px;
-  text-wrap: balance;
-  color: var(--text-secondary);
-}
-
-.intro a {
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.ctas {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: 440px;
-  gap: 16px;
-  font-size: 14px;
-}
-
-.ctas a {
-  display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
+  padding: 4rem;
+}
+
+/* Corner markers */
+.cornerTL,
+.cornerTR,
+.cornerBL,
+.cornerBR {
+  position: absolute;
+  width: 40px;
   height: 40px;
-  padding: 0 16px;
-  border-radius: 128px;
-  border: 1px solid transparent;
-  transition: 0.2s;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.cornerTL {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+}
+
+.cornerTR {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+}
+
+.cornerBL {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+}
+
+.cornerBR {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 1rem;
+}
+
+.centerImageContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.avatarPlaceholder {
+  width: 60%;
+  height: 60%;
+  position: relative;
+  /* In a real app, this would be the avatar. 
+     For now, relying on the background image to provide the face as per the design mockup */
+}
+
+.micContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
   cursor: pointer;
-  width: fit-content;
-  font-weight: 500;
+  transition: transform 0.2s;
 }
 
-a.primary {
-  background: var(--text-primary);
-  color: var(--background);
-  gap: 8px;
+.micContainer:active {
+  transform: scale(0.95);
 }
 
-a.secondary {
-  border-color: var(--button-secondary-border);
+.micIcon {
+  color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
 }
 
-/* Enable hover only on non-touch devices */
-@media (hover: hover) and (pointer: fine) {
-  a.primary:hover {
-    background: var(--button-primary-hover);
-    border-color: transparent;
-  }
-
-  a.secondary:hover {
-    background: var(--button-secondary-hover);
-    border-color: transparent;
-  }
+.micGlow {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+  animation: pulse 2s infinite ease-in-out;
 }
 
-@media (max-width: 600px) {
-  .main {
-    padding: 48px 24px;
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
   }
 
-  .intro {
-    gap: 16px;
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
   }
 
-  .intro h1 {
-    font-size: 32px;
-    line-height: 40px;
-    letter-spacing: -1.92px;
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
+.micActive .micGlow {
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.4) 0%, rgba(74, 222, 128, 0) 70%);
+  animation: pulseActive 1.5s infinite ease-in-out;
+}
+
+.micIconActive {
+  color: #4ade80;
+}
+
+@keyframes pulseActive {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
   }
 
-  .page {
-    --background: #000;
-    --foreground: #000;
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
-
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
   }
 }

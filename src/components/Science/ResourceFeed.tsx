@@ -1,0 +1,76 @@
+import React from 'react';
+import ArticleCard from './ArticleCard';
+import PageTransition from '../UI/PageTransition';
+import styles from './Science.module.css';
+
+const ResourceFeed = () => {
+    const articles = [
+        {
+            id: 1,
+            category: 'Research',
+            date: 'Nov 28, 2025',
+            title: 'Breakthrough in Non-Invasive Memory Stimulation',
+            summary: 'New study shows promising results using 40Hz gamma frequency light and sound therapy to reduce amyloid plaques.'
+        },
+        {
+            id: 2,
+            category: 'Caregiving',
+            date: 'Nov 25, 2025',
+            title: 'The Power of Personalized Music Therapy',
+            summary: 'How curated playlists from a patient\'s youth can significantly reduce agitation and improve mood.'
+        },
+        {
+            id: 3,
+            category: 'Clinical Trials',
+            date: 'Nov 20, 2025',
+            title: 'Phase 3 Trial Results for Leqembi',
+            summary: 'Detailed analysis of the latest clinical data on the efficacy and safety profile of the new antibody treatment.'
+        },
+        {
+            id: 4,
+            category: 'Wellness',
+            date: 'Nov 18, 2025',
+            title: 'Circadian Rhythms and Dementia',
+            summary: 'Understanding the importance of light exposure and sleep hygiene in managing sundowning symptoms.'
+        },
+        {
+            id: 5,
+            category: 'Technology',
+            date: 'Nov 15, 2025',
+            title: 'AI Companions in Elderly Care',
+            summary: 'Ethical considerations and practical benefits of using AI avatars for social engagement.'
+        },
+        {
+            id: 6,
+            category: 'Nutrition',
+            date: 'Nov 10, 2025',
+            title: 'The MIND Diet: Updated Guidelines',
+            summary: 'Recent findings on specific nutrients that may slow cognitive decline in early-stage Alzheimer\'s.'
+        }
+    ];
+
+    return (
+        <PageTransition className={styles.feedContainer}>
+            <header className={styles.header}>
+                <h1 className={styles.title}>New Science</h1>
+                <p className={styles.subtitle}>
+                    Curated research, clinical updates, and therapeutic resources for the modern caregiver.
+                </p>
+            </header>
+
+            <div className={styles.grid}>
+                {articles.map((article) => (
+                    <ArticleCard
+                        key={article.id}
+                        title={article.title}
+                        summary={article.summary}
+                        date={article.date}
+                        category={article.category}
+                    />
+                ))}
+            </div>
+        </PageTransition>
+    );
+};
+
+export default ResourceFeed;
