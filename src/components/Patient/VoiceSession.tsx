@@ -85,7 +85,11 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             }
         } catch (err: any) {
             console.error('Microphone permission denied:', err);
-            setError(`${err.name}: ${err.message}`);
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                setError('Access Blocked. Click the Lock icon 🔒 in the URL bar and switch Microphone to "Allow".');
+            } else {
+                setError(`${err.name}: ${err.message}`);
+            }
         }
     };
 
@@ -123,7 +127,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             recognition.onerror = (event: any) => {
                 console.error('Speech recognition error', event.error);
                 if (event.error === 'not-allowed') {
-                    setError('Microphone access denied. Please allow access.');
+                    setError('Access Blocked. Click the Lock icon 🔒 in the URL bar and switch Microphone to "Allow".');
                     setStatus('listening');
                 } else if (event.error === 'no-speech') {
                     console.log('No speech detected, restarting...');
