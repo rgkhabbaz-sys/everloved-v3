@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import ArticleCard from './ArticleCard';
 import PageTransition from '../UI/PageTransition';
 import styles from './Science.module.css';
@@ -50,26 +51,39 @@ const ResourceFeed = () => {
     ];
 
     return (
-        <PageTransition className={styles.feedContainer}>
-            <header className={styles.header}>
-                <h1 className={styles.title}>New Science</h1>
-                <p className={styles.subtitle}>
-                    Curated research, clinical updates, and therapeutic resources for the modern caregiver.
-                </p>
-            </header>
-
-            <div className={styles.grid}>
-                {articles.map((article) => (
-                    <ArticleCard
-                        key={article.id}
-                        title={article.title}
-                        summary={article.summary}
-                        date={article.date}
-                        category={article.category}
-                    />
-                ))}
+        <div className={styles.container}>
+            <div className={styles.backgroundWrapper}>
+                <Image
+                    src="/science-bg.jpg"
+                    alt="Dramatic Cliffside Landscape"
+                    fill
+                    className={styles.backgroundImage}
+                    priority
+                />
+                <div className={styles.overlay} />
             </div>
-        </PageTransition>
+
+            <PageTransition className={styles.feedContainer}>
+                <header className={styles.header}>
+                    <h1 className={styles.title}>New Science</h1>
+                    <p className={styles.subtitle}>
+                        Curated research, clinical updates, and therapeutic resources for the modern caregiver.
+                    </p>
+                </header>
+
+                <div className={styles.grid}>
+                    {articles.map((article) => (
+                        <ArticleCard
+                            key={article.id}
+                            title={article.title}
+                            summary={article.summary}
+                            date={article.date}
+                            category={article.category}
+                        />
+                    ))}
+                </div>
+            </PageTransition>
+        </div>
     );
 };
 
