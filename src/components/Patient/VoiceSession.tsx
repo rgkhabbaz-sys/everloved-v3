@@ -104,7 +104,6 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             recognition.onstart = () => {
                 console.log('Speech recognition started');
                 setError(null);
-                setStatus('listening');
             };
 
             recognition.onaudiostart = () => console.log('Audio capturing started');
@@ -138,17 +137,12 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
             recognition.onend = () => {
                 console.log('Speech recognition ended');
-                // Restart if still in listening mode and no fatal error
-                if (status === 'listening' && error !== 'Microphone access denied. Please allow access.') {
-                    try {
-                        recognition.start();
-                    } catch (e) {
-                        // Ignore error if already started
-                    }
-                }
+                // We handle restarts manually in the flow, or here if it ended unexpectedly
             };
 
             recognitionRef.current = recognition;
+
+            // Initial start
             try {
                 recognition.start();
             } catch (e) {
@@ -163,6 +157,21 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 recognitionRef.current.stop();
             }
         };
+    }, []); // Empty dependency array - run once on mount
+
+    // Effect to handle status-based recognition control
+    useEffect(() => {
+        if (!recognitionRef.current) return;
+
+        if (status === 'listening' && !error) {
+            try {
+                recognitionRef.current.start();
+            } catch (e) {
+                // Already started or other non-fatal error
+            }
+        } else {
+            recognitionRef.current.stop();
+        }
     }, [status, error]);
 
     const handleUserSpeech = async (text: string) => {
@@ -202,11 +211,6 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         utterance.onend = () => {
             setStatus('listening');
             if (onSpeakingStateChange) onSpeakingStateChange(false);
-            if (recognitionRef.current) {
-                try {
-                    recognitionRef.current.start();
-                } catch (e) { /* ignore */ }
-            }
         };
 
         window.speechSynthesis.speak(utterance);
