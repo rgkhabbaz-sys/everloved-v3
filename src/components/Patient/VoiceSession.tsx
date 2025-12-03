@@ -57,10 +57,9 @@ declare global {
 
 const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingStateChange }) => {
     const [barHeights, setBarHeights] = useState<number[]>([]);
-    const [status, setStatus] = useState<'listening' | 'processing' | 'speaking'>('listening');
+    const [status, setStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
     const [transcript, setTranscript] = useState('');
     const recognitionRef = useRef<SpeechRecognition | null>(null);
-
     const [error, setError] = useState<string | null>(null);
 
     // Waveform animation
@@ -77,12 +76,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             // Permission granted! Stop the stream immediately, we just needed the permission.
             stream.getTracks().forEach(track => track.stop());
             setError(null);
-            // Now try starting recognition again
-            if (recognitionRef.current) {
-                try {
-                    recognitionRef.current.start();
-                } catch (e) { /* ignore */ }
-            }
+            startSession();
         } catch (err: any) {
             console.error('Microphone permission denied:', err);
             if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
@@ -91,6 +85,11 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 setError(`${err.name}: ${err.message}`);
             }
         }
+    };
+
+    const startSession = () => {
+        setStatus('listening');
+        setError(null);
     };
 
     // Speech Recognition Setup
@@ -127,7 +126,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 console.error('Speech recognition error', event.error);
                 if (event.error === 'not-allowed') {
                     setError('Access Blocked. Click the Lock icon 🔒 in the URL bar and switch Microphone to "Allow".');
-                    setStatus('listening');
+                    setStatus('idle');
                 } else if (event.error === 'no-speech') {
                     console.log('No speech detected, restarting...');
                 } else {
@@ -141,13 +140,6 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             };
 
             recognitionRef.current = recognition;
-
-            // Initial start
-            try {
-                recognition.start();
-            } catch (e) {
-                console.error(e);
-            }
         } else {
             setError("Browser doesn't support speech recognition.");
         }
@@ -218,60 +210,72 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
     return (
         <div className={styles.voiceSessionContainer}>
-            <div className={styles.waveformContainer}>
-                {barHeights.map((height, i) => (
-                    <div
-                        key={i}
-                        className={styles.bar}
-                        style={{
-                            height: `${height}px`,
-                            background: status === 'speaking' ? '#4ade80' : status === 'processing' ? '#fbbf24' : 'rgba(255,255,255,0.8)'
-                        }}
-                    />
-                ))}
-            </div>
-
-            <p className={styles.statusText}>
-                {error ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', maxWidth: '90%' }}>
-                        <span style={{ color: '#ef4444', textAlign: 'center' }}>{error}</span>
-                        <button
-                            onClick={requestMicrophoneAccess}
-                            style={{
-                                background: '#4ade80', color: 'black', border: 'none',
-                                padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer',
-                                fontWeight: 600, fontSize: '0.8rem'
-                            }}
-                        >
-                            Force Enable Microphone
-                        </button>
+            {status === 'idle' && !error ? (
+                <button
+                    onClick={startSession}
+                    className={styles.endButton}
+                    style={{ background: '#4ade80', color: 'black', fontWeight: 'bold' }}
+                >
+                    Start Conversation
+                </button>
+            ) : (
+                <>
+                    <div className={styles.waveformContainer}>
+                        {barHeights.map((height, i) => (
+                            <div
+                                key={i}
+                                className={styles.bar}
+                                style={{
+                                    height: `${height}px`,
+                                    background: status === 'speaking' ? '#4ade80' : status === 'processing' ? '#fbbf24' : 'rgba(255,255,255,0.8)'
+                                }}
+                            />
+                        ))}
                     </div>
-                ) : (
-                    <>
-                        {status === 'listening' && "Listening..."}
-                        {status === 'processing' && "Thinking..."}
-                        {status === 'speaking' && "Speaking..."}
-                    </>
-                )}
-            </p>
-            {!error && transcript && <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', maxWidth: '300px', textAlign: 'center' }}>"{transcript}"</p>}
 
-            <div className={styles.inputContainer}>
-                <input
-                    type="text"
-                    className={styles.textInput}
-                    placeholder="Or type a message..."
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement;
-                            if (target.value.trim()) {
-                                handleUserSpeech(target.value);
-                                target.value = '';
-                            }
-                        }
-                    }}
-                />
-            </div>
+                    <p className={styles.statusText}>
+                        {error ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', maxWidth: '90%' }}>
+                                <span style={{ color: '#ef4444', textAlign: 'center' }}>{error}</span>
+                                <button
+                                    onClick={requestMicrophoneAccess}
+                                    style={{
+                                        background: '#4ade80', color: 'black', border: 'none',
+                                        padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer',
+                                        fontWeight: 600, fontSize: '0.8rem'
+                                    }}
+                                >
+                                    Force Enable Microphone
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                {status === 'listening' && "Listening..."}
+                                {status === 'processing' && "Thinking..."}
+                                {status === 'speaking' && "Speaking..."}
+                            </>
+                        )}
+                    </p>
+                    {!error && transcript && <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem', maxWidth: '300px', textAlign: 'center' }}>"{transcript}"</p>}
+
+                    <div className={styles.inputContainer}>
+                        <input
+                            type="text"
+                            className={styles.textInput}
+                            placeholder="Or type a message..."
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    const target = e.target as HTMLInputElement;
+                                    if (target.value.trim()) {
+                                        handleUserSpeech(target.value);
+                                        target.value = '';
+                                    }
+                                }
+                            }}
+                        />
+                    </div>
+                </>
+            )}
 
             <button className={styles.endButton} onClick={onEndSession}>
                 End Session
