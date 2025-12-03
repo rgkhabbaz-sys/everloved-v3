@@ -83,9 +83,9 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                     recognitionRef.current.start();
                 } catch (e) { /* ignore */ }
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Microphone permission denied:', err);
-            setError('Microphone access is blocked. Please check your browser settings.');
+            setError(`${err.name}: ${err.message}`);
         }
     };
 
@@ -225,8 +225,8 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
             <p className={styles.statusText}>
                 {error ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                        <span style={{ color: '#ef4444' }}>{error}</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', maxWidth: '90%' }}>
+                        <span style={{ color: '#ef4444', textAlign: 'center' }}>{error}</span>
                         <button
                             onClick={requestMicrophoneAccess}
                             style={{
