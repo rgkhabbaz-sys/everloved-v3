@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Heart, Moon, Activity, Brain } from 'lucide-react';
 import MetricCard from './MetricCard';
 import PageTransition from '../UI/PageTransition';
@@ -11,56 +12,69 @@ const WellnessDashboard = () => {
     const moodData = [60, 65, 70, 80, 75, 70, 65, 60, 65, 70];
 
     return (
-        <PageTransition className={styles.dashboard}>
-            <header className={styles.header}>
-                <h1 className={styles.title}>Health & Wellness</h1>
-                <p className={styles.subtitle}>
-                    Real-time monitoring of vital signs, sleep quality, and emotional well-being.
-                </p>
-            </header>
-
-            <div className={styles.grid}>
-                <MetricCard
-                    title="Heart Rate"
-                    value="72"
-                    unit="BPM"
-                    icon={Heart}
-                    status="good"
-                    statusText="Normal Range"
-                    data={heartRateData}
+        <div className={styles.container}>
+            <div className={styles.backgroundWrapper}>
+                <Image
+                    src="/wellness-bg.png"
+                    alt="Serene Mountain Landscape"
+                    fill
+                    className={styles.backgroundImage}
+                    priority
                 />
-
-                <MetricCard
-                    title="Sleep Quality"
-                    value="7.5"
-                    unit="Hours"
-                    icon={Moon}
-                    status="good"
-                    statusText="Restful Sleep"
-                    data={sleepData}
-                />
-
-                <MetricCard
-                    title="Daily Activity"
-                    value="2,450"
-                    unit="Steps"
-                    icon={Activity}
-                    status="warning"
-                    statusText="Below Target"
-                    data={[20, 30, 40, 35, 25, 15, 10]}
-                />
-
-                <MetricCard
-                    title="Cognitive State"
-                    value="Stable"
-                    unit=""
-                    icon={Brain}
-                    status="neutral"
-                    statusText="No significant changes"
-                    data={moodData}
-                />
+                <div className={styles.overlay} />
             </div>
-        </PageTransition>
+
+            <PageTransition className={styles.dashboard}>
+                <header className={styles.header}>
+                    <h1 className={styles.title}>Health & Wellness</h1>
+                    <p className={styles.subtitle}>
+                        Real-time monitoring of vital signs, sleep quality, and emotional well-being.
+                    </p>
+                </header>
+
+                <div className={styles.grid}>
+                    <MetricCard
+                        title="Heart Rate"
+                        value="72"
+                        unit="BPM"
+                        icon={Heart}
+                        status="good"
+                        statusText="Normal Range"
+                        data={heartRateData}
+                    />
+
+                    <MetricCard
+                        title="Sleep Quality"
+                        value="7.5"
+                        unit="Hours"
+                        icon={Moon}
+                        status="good"
+                        statusText="Restful Sleep"
+                        data={sleepData}
+                    />
+
+                    <MetricCard
+                        title="Daily Activity"
+                        value="2,450"
+                        unit="Steps"
+                        icon={Activity}
+                        status="warning"
+                        statusText="Below Target"
+                        data={[20, 30, 40, 35, 25, 15, 10]}
+                    />
+
+                    <MetricCard
+                        title="Cognitive State"
+                        value="Stable"
+                        unit=""
+                        icon={Brain}
+                        status="neutral"
+                        statusText="No significant changes"
+                        data={moodData}
+                    />
+                </div>
+            </PageTransition>
+        </div>
     );
 };
 
