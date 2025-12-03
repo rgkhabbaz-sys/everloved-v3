@@ -86,9 +86,13 @@ export default function Home() {
             >
               <motion.div
                 className={styles.navItemContent}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 250 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 + (index * 0.1), duration: 0.5 }}
+                transition={{
+                  delay: 0.5 + (index * 0.2),
+                  duration: 1.2,
+                  ease: [0.22, 1, 0.36, 1] // Custom cubic bezier for smooth "curtain" feel
+                }}
                 whileTap={{ scale: 0.95 }}
                 style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}
               >
