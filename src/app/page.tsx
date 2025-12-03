@@ -78,30 +78,27 @@ export default function Home() {
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = item.path === '/';
+          const MotionLink = motion(Link);
+
           return (
-            <Link
+            <MotionLink
               key={item.path}
               href={item.path}
               className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''}`}
+              initial={{ opacity: 0, x: 250 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: 0.5 + (index * 0.2),
+                duration: 2.5,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              whileTap={{ scale: 0.95 }}
             >
-              <motion.div
-                className={styles.navItemContent}
-                initial={{ opacity: 0, x: 250 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{
-                  delay: 0.5 + (index * 0.2),
-                  duration: 1.2,
-                  ease: [0.22, 1, 0.36, 1] // Custom cubic bezier for smooth "curtain" feel
-                }}
-                whileTap={{ scale: 0.95 }}
-                style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}
-              >
-                <div className={styles.iconWrapper}>
-                  <Icon size={24} />
-                </div>
-                <span className={styles.linkText}>{item.name}</span>
-              </motion.div>
-            </Link>
+              <div className={styles.iconWrapper}>
+                <Icon size={24} />
+              </div>
+              <span className={styles.linkText}>{item.name}</span>
+            </MotionLink>
           );
         })}
       </nav>
