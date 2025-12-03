@@ -9,6 +9,8 @@ import styles from './page.module.css';
 import Link from 'next/link';
 import { Heart, Settings, BookOpen, Activity } from 'lucide-react';
 
+import { motion } from 'framer-motion';
+
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -38,23 +40,42 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.backgroundWrapper}>
-        <Image
-          src="/patient-bg.jpg"
-          alt="Serene Greek Island Landscape"
-          fill
-          priority
-          className={styles.backgroundImage}
-          quality={100}
-        />
+        <motion.div
+          initial={{ scale: 1 }}
+          animate={{ scale: 1.15 }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            repeatType: 'reverse',
+            ease: 'easeInOut',
+          }}
+          style={{ width: '100%', height: '100%', position: 'absolute' }}
+        >
+          <Image
+            src="/patient-bg.jpg"
+            alt="Serene Greek Island Landscape"
+            fill
+            priority
+            className={styles.backgroundImage}
+            quality={100}
+          />
+        </motion.div>
         <div className={styles.overlay} />
       </div>
 
       {/* Logo */}
-      <div className={styles.logo}>EverLoved</div>
+      <motion.div
+        className={styles.logo}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+      >
+        EverLoved
+      </motion.div>
 
       {/* Vertical Sidebar Navigation */}
       <nav className={styles.sidebar}>
-        {navItems.map((item) => {
+        {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = item.path === '/';
           return (
@@ -63,10 +84,19 @@ export default function Home() {
               href={item.path}
               className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''}`}
             >
-              <div className={styles.iconWrapper}>
-                <Icon size={24} />
-              </div>
-              <span className={styles.linkText}>{item.name}</span>
+              <motion.div
+                className={styles.navItemContent}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.8 + (index * 0.1), duration: 0.5 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%' }}
+              >
+                <div className={styles.iconWrapper}>
+                  <Icon size={24} />
+                </div>
+                <span className={styles.linkText}>{item.name}</span>
+              </motion.div>
             </Link>
           );
         })}
@@ -74,13 +104,29 @@ export default function Home() {
 
       {/* Floating Avatar Box */}
       {avatar && (
-        <div className={styles.avatarBox}>
+        <motion.div
+          className={styles.avatarBox}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{
+            opacity: [0.8, 0.9, 0.8],
+            scale: 1
+          }}
+          transition={{
+            opacity: {
+              duration: 5,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut"
+            },
+            scale: { duration: 1, ease: "easeOut" }
+          }}
+        >
           <img
             src={avatar}
             alt="Loved One"
             className={`${styles.avatarImage} ${isSpeaking ? styles.avatarSpeaking : ''}`}
           />
-        </div>
+        </motion.div>
       )}
 
       <div className={styles.content}>
@@ -94,10 +140,16 @@ export default function Home() {
           )}
 
           {!isListening && (
-            <>
-              <div
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+            >
+              <motion.div
                 className={`${styles.micContainer} ${isListening ? styles.micActive : ''}`}
                 onClick={toggleListening}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <div className={`${styles.micIcon} ${isListening ? styles.micIconActive : ''}`}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -108,10 +160,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className={styles.micGlow} />
-              </div>
+              </motion.div>
 
               <TherapyModes currentMode={mode} onModeSelect={setMode} />
-            </>
+            </motion.div>
           )}
         </div>
       </div>

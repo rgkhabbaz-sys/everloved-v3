@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Heart, Settings, BookOpen, Activity } from 'lucide-react';
@@ -31,8 +32,13 @@ const NavBar = () => {
                                 href={item.path}
                                 className={`${styles.link} ${isActive ? styles.active : ''}`}
                             >
-                                <Icon size={20} />
-                                <span>{item.name}</span>
+                                <motion.div
+                                    whileTap={{ scale: 0.95 }}
+                                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                                >
+                                    <Icon size={20} />
+                                    <span>{item.name}</span>
+                                </motion.div>
                             </Link>
                         );
                     })}

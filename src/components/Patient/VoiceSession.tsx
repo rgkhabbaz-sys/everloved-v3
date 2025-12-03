@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Patient.module.css';
 
@@ -260,9 +261,27 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 <>
                     {/* Soft Ripple Animation for Active State */}
                     <div className={styles.rippleContainer}>
-                        {status === 'speaking' && <div className={styles.rippleSpeaking} />}
-                        {status === 'processing' && <div className={styles.rippleProcessing} />}
-                        {status === 'listening' && <div className={styles.rippleListening} />}
+                        {status === 'speaking' && (
+                            <motion.div
+                                className={styles.rippleSpeaking}
+                                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                        )}
+                        {status === 'processing' && (
+                            <motion.div
+                                className={styles.rippleProcessing}
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                            />
+                        )}
+                        {status === 'listening' && (
+                            <motion.div
+                                className={styles.rippleListening}
+                                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
+                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                        )}
                     </div>
 
                     <p className={styles.statusText}>

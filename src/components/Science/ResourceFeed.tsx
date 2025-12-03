@@ -1,8 +1,25 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import ArticleCard from './ArticleCard';
-import PageTransition from '../UI/PageTransition';
+import { motion } from 'framer-motion';
 import styles from './Science.module.css';
+
+const container = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
+
+const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+};
 
 const ResourceFeed = () => {
     const articles = [
@@ -63,7 +80,12 @@ const ResourceFeed = () => {
                 <div className={styles.overlay} />
             </div>
 
-            <PageTransition className={styles.feedContainer}>
+            <motion.div
+                className={styles.feedContainer}
+                variants={container}
+                initial="hidden"
+                animate="show"
+            >
                 <header className={styles.header}>
                     <h1 className={styles.title}>New Science</h1>
                     <p className={styles.subtitle}>
@@ -73,16 +95,17 @@ const ResourceFeed = () => {
 
                 <div className={styles.grid}>
                     {articles.map((article) => (
-                        <ArticleCard
-                            key={article.id}
-                            title={article.title}
-                            summary={article.summary}
-                            date={article.date}
-                            category={article.category}
-                        />
+                        <motion.div key={article.id} variants={item}>
+                            <ArticleCard
+                                title={article.title}
+                                summary={article.summary}
+                                date={article.date}
+                                category={article.category}
+                            />
+                        </motion.div>
                     ))}
                 </div>
-            </PageTransition>
+            </motion.div>
         </div>
     );
 };
