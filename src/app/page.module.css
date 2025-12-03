@@ -88,16 +88,19 @@
   display: none;
 }
 
-/* Floating Avatar Box */
+/* Floating Avatar Box - Centered */
 .avatarBox {
   position: absolute;
-  top: 40px;
-  left: 40px;
-  width: 280px;
-  height: 380px;
-  border-radius: 24px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 560px;
+  /* Doubled from 280px */
+  height: 760px;
+  /* Doubled from 380px */
+  border-radius: 32px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.2);
   z-index: 5;
   background: rgba(0, 0, 0, 0.2);
