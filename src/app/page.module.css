@@ -216,6 +216,78 @@
   }
 }
 
+/* Logo */
+.logo {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  font-family: 'Merriweather', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #fff;
+  z-index: 20;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.02em;
+}
+
+/* Vertical Sidebar Navigation */
+.sidebar {
+  position: absolute;
+  top: 120px;
+  /* Below logo */
+  left: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 20;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 240px;
+}
+
+.navLink:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
+  color: #fff;
+}
+
+.activeNavLink {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.activeNavLink:hover {
+  background: #fff;
+  color: #000;
+  transform: none;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.linkText {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
 /* Hide corner markers */
 .cornerTL,
 .cornerTR,

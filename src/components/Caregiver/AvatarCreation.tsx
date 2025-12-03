@@ -102,7 +102,10 @@ const AvatarCreation = () => {
         console.log('Saving configuration...', { selectedPhotoIndex, photosLength: photos.length });
 
         try {
-            if (selectedPhotoIndex !== null && photos[selectedPhotoIndex]) {
+            if (selectedPhotoIndex === -1) {
+                console.log('Clearing avatar from localStorage (No Photo selected)');
+                localStorage.removeItem('everloved_avatar');
+            } else if (selectedPhotoIndex !== null && photos[selectedPhotoIndex]) {
                 console.log('Saving avatar to localStorage:', photos[selectedPhotoIndex].substring(0, 50) + '...');
                 localStorage.setItem('everloved_avatar', photos[selectedPhotoIndex]);
             } else {
@@ -175,6 +178,38 @@ const AvatarCreation = () => {
                     <div style={{ marginTop: '1.5rem' }}>
                         <p className={styles.label}>Select Primary Avatar:</p>
                         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                            {/* No Photo Option */}
+                            <div
+                                style={{
+                                    position: 'relative',
+                                    width: '80px',
+                                    height: '80px',
+                                    cursor: 'pointer',
+                                    border: selectedPhotoIndex === -1 ? '3px solid #4ade80' : '2px solid rgba(255,255,255,0.2)',
+                                    borderRadius: '10px',
+                                    transition: 'all 0.2s ease',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'rgba(0,0,0,0.2)',
+                                    flexDirection: 'column',
+                                    gap: '4px'
+                                }}
+                                onClick={() => setSelectedPhotoIndex(-1)}
+                            >
+                                <span style={{ fontSize: '0.7rem', fontWeight: 700, textAlign: 'center', lineHeight: 1.2 }}>No<br />Photo</span>
+                                {selectedPhotoIndex === -1 && (
+                                    <div style={{
+                                        position: 'absolute', bottom: -8, right: -8,
+                                        background: '#4ade80', color: 'black',
+                                        borderRadius: '50%', width: '20px', height: '20px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                        <Check size={12} strokeWidth={3} />
+                                    </div>
+                                )}
+                            </div>
+
                             {photos.map((photo, index) => (
                                 <div
                                     key={index}

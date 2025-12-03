@@ -9,7 +9,7 @@ import CognitiveAnalytics from './CognitiveAnalytics';
 import styles from './Caregiver.module.css';
 
 const Dashboard = () => {
-    const [activeTab, setActiveTab] = useState('monitoring');
+    const [activeTab, setActiveTab] = useState('configuration');
 
     return (
         <div className={styles.container}>

@@ -6,6 +6,9 @@ import VoiceSession from '../components/Patient/VoiceSession';
 import TherapyModes from '../components/Patient/TherapyModes';
 import styles from './page.module.css';
 
+import Link from 'next/link';
+import { Heart, Settings, BookOpen, Activity } from 'lucide-react';
+
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -25,6 +28,13 @@ export default function Home() {
     setIsSpeaking(false);
   };
 
+  const navItems = [
+    { name: 'Patient Comfort', path: '/', icon: Heart },
+    { name: 'Caregiver Control', path: '/caregiver', icon: Settings },
+    { name: 'New Science', path: '/science', icon: BookOpen },
+    { name: 'Health & Wellness', path: '/wellness', icon: Activity },
+  ];
+
   return (
     <div className={styles.container}>
       <div className={styles.backgroundWrapper}>
@@ -38,6 +48,29 @@ export default function Home() {
         />
         <div className={styles.overlay} />
       </div>
+
+      {/* Logo */}
+      <div className={styles.logo}>EverLoved</div>
+
+      {/* Vertical Sidebar Navigation */}
+      <nav className={styles.sidebar}>
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = item.path === '/';
+          return (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''}`}
+            >
+              <div className={styles.iconWrapper}>
+                <Icon size={24} />
+              </div>
+              <span className={styles.linkText}>{item.name}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
       {/* Floating Avatar Box */}
       {avatar && (
