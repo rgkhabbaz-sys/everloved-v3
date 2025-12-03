@@ -42,9 +42,9 @@ export default function Home() {
       <div className={styles.backgroundWrapper}>
         <motion.div
           initial={{ scale: 1 }}
-          animate={{ scale: 1.15 }}
+          animate={{ scale: 1.3 }}
           transition={{
-            duration: 25,
+            duration: 35,
             repeat: Infinity,
             repeatType: 'reverse',
             ease: 'easeInOut',
@@ -108,17 +108,14 @@ export default function Home() {
           className={styles.avatarBox}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{
-            opacity: [0.8, 0.9, 0.8],
-            scale: 1
+            opacity: [0.6, 1, 0.6],
+            scale: [0.98, 1.03, 0.98]
           }}
           transition={{
-            opacity: {
-              duration: 5,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            },
-            scale: { duration: 1, ease: "easeOut" }
+            duration: 6,
+            repeat: Infinity,
+            repeatType: "reverse",
+            ease: "easeInOut"
           }}
         >
           <img
