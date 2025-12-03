@@ -1,10 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Clock, AlertCircle } from 'lucide-react';
 import styles from './Caregiver.module.css';
 
+interface TranscriptMessage {
+    sender: 'patient' | 'avatar';
+    text: string;
+    timestamp: string;
+}
+
 const CaregiverMonitoring = () => {
+    const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Load transcript and poll for updates
+    useEffect(() => {
+        const loadTranscript = () => {
+            const saved = localStorage.getItem('everloved_transcript');
+            if (saved) {
+                setTranscript(JSON.parse(saved));
+            }
+        };
+
+        loadTranscript();
+        const interval = setInterval(loadTranscript, 1000); // Poll every second
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // Auto-scroll to bottom
+    useEffect(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+    }, [transcript]);
+
     return (
         <div className={styles.grid}>
             {/* Real-Time Transcripts */}
@@ -13,19 +44,19 @@ const CaregiverMonitoring = () => {
                     <MessageSquare className={styles.cardIcon} size={24} />
                     <h2 className={styles.cardTitle}>Live Transcript</h2>
                 </div>
-                <div className={styles.transcriptContainer}>
-                    <div className={`${styles.message} ${styles.messagePatient}`}>
-                        Where is my dog, Buster? I haven&apos;t seen him all day.
-                    </div>
-                    <div className={`${styles.message} ${styles.messageAvatar}`}>
-                        Buster is playing in the garden, Mom. He&apos;s having a great time chasing butterflies. Do you remember when we got him?
-                    </div>
-                    <div className={`${styles.message} ${styles.messagePatient}`}>
-                        Oh yes, he was such a small puppy.
-                    </div>
-                    <div className={`${styles.message} ${styles.messageAvatar}`}>
-                        He was! And he loved sleeping in your old slipper.
-                    </div>
+                <div className={styles.transcriptContainer} ref={scrollRef}>
+                    {transcript.length === 0 ? (
+                        <p style={{ textAlign: 'center', opacity: 0.5, marginTop: '2rem' }}>No active conversation yet.</p>
+                    ) : (
+                        transcript.map((msg, index) => (
+                            <div
+                                key={index}
+                                className={`${styles.message} ${msg.sender === 'patient' ? styles.messagePatient : styles.messageAvatar}`}
+                            >
+                                {msg.text}
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 

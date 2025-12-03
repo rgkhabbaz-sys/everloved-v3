@@ -175,20 +175,54 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         setStatus('processing');
         if (onSpeakingStateChange) onSpeakingStateChange(false);
 
+        // Save user message to transcript
+        saveToTranscript('patient', text);
+
         // Simulate thinking delay
         setTimeout(() => {
             const response = generateResponse(text);
+            saveToTranscript('avatar', response);
             speakResponse(response);
         }, 1000);
     };
 
+    const saveToTranscript = (sender: 'patient' | 'avatar', text: string) => {
+        const newMessage = { sender, text, timestamp: new Date().toISOString() };
+        const existing = localStorage.getItem('everloved_transcript');
+        const transcript = existing ? JSON.parse(existing) : [];
+        const updated = [...transcript, newMessage];
+        localStorage.setItem('everloved_transcript', JSON.stringify(updated));
+        // Dispatch event for other tabs/components to pick up
+        window.dispatchEvent(new Event('storage'));
+    };
+
     const generateResponse = (text: string): string => {
         const lowerText = text.toLowerCase();
+
+        // Load boundaries
+        const savedBoundaries = localStorage.getItem('everloved_boundaries');
+        const boundaries = savedBoundaries ? JSON.parse(savedBoundaries) : {};
+
+        // Check Boundaries
+        if (boundaries.blockTravel && (lowerText.includes('go home') || lowerText.includes('travel') || lowerText.includes('ticket') || lowerText.includes('airport'))) {
+            return "We are safe right here. Look at the beautiful view. Why don't we just relax for a while?";
+        }
+
+        if (boundaries.blockAlive && (lowerText.includes('alive') || lowerText.includes('dead') || lowerText.includes('died'))) {
+            return "I am right here with you. That is what matters most.";
+        }
+
+        if (boundaries.redirectConfusion && (lowerText.includes('who are you') || lowerText.includes('where am i'))) {
+            return "You are in a safe place, and I am here to keep you company. You are loved.";
+        }
+
+        // Standard Responses
         if (lowerText.includes('hello') || lowerText.includes('hi')) return "Hello there. It's so good to see you.";
         if (lowerText.includes('how are you')) return "I'm doing quite well, thank you. Just enjoying the view.";
         if (lowerText.includes('weather')) return "It looks like a beautiful day outside.";
         if (lowerText.includes('remember')) return "I have so many wonderful memories. Which one are you thinking of?";
         if (lowerText.includes('love you')) return "I love you too, very much.";
+
         return "That's interesting. Tell me more about that.";
     };
 

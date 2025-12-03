@@ -112,6 +112,10 @@ const AvatarCreation = () => {
                 console.warn('No avatar selected or photo not found');
             }
 
+            // Save boundaries
+            localStorage.setItem('everloved_boundaries', JSON.stringify(boundaries));
+            console.log('Saved boundaries:', boundaries);
+
             // Simulate API call
             setTimeout(() => {
                 setIsSaving(false);
