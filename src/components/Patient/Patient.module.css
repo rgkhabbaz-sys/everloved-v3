@@ -270,3 +270,49 @@
     color: var(--muted);
     font-weight: 500;
 }
+
+/* Therapy Modes - Glass Pill Design */
+.modesContainer {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 6px;
+    border-radius: 99px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    pointer-events: auto;
+    /* Ensure clickable */
+}
+
+.modeButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 99px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.modeButton:hover {
+    color: var(--foreground);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.activeMode {
+    background: #ffffff !important;
+    color: var(--primary) !important;
+    box-shadow:
+        0 4px 12px rgba(90, 112, 96, 0.15),
+        0 0 0 1px rgba(90, 112, 96, 0.1) inset;
+    transform: scale(1.05);
+}
