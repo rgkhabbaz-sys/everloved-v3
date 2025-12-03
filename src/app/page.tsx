@@ -29,8 +29,8 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.backgroundWrapper}>
         <Image
-          src="/landing-bg.jpg"
-          alt="Serene coastal landscape with overlay"
+          src="/patient-bg.jpg"
+          alt="Serene Greek Island Landscape"
           fill
           priority
           className={styles.backgroundImage}
@@ -39,48 +39,26 @@ export default function Home() {
         <div className={styles.overlay} />
       </div>
 
+      {/* Floating Avatar Box */}
+      {avatar && (
+        <div className={styles.avatarBox}>
+          <img
+            src={avatar}
+            alt="Loved One"
+            className={`${styles.avatarImage} ${isSpeaking ? styles.avatarSpeaking : ''}`}
+          />
+        </div>
+      )}
+
       <div className={styles.content}>
         <div className={styles.frame}>
-          <div className={styles.cornerTL} />
-          <div className={styles.cornerTR} />
-          <div className={styles.cornerBL} />
-          <div className={styles.cornerBR} />
-
-          <h1 className={styles.title}>EverLoved</h1>
-
-          <div className={styles.centerImageContainer}>
-            {avatar ? (
-              <div className={styles.avatarPlaceholder} style={{ overflow: 'hidden' }}>
-                <img
-                  src={avatar}
-                  alt="Loved One"
-                  className={isSpeaking ? styles.avatarSpeaking : ''}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    opacity: (isListening && !isSpeaking) ? 0.5 : 1,
-                    transition: 'opacity 0.3s ease, transform 0.3s ease'
-                  }}
-                />
-                {isListening && (
-                  <VoiceSession
-                    onEndSession={toggleListening}
-                    onSpeakingStateChange={setIsSpeaking}
-                  />
-                )}
-              </div>
-            ) : (
-              <div className={styles.avatarPlaceholder}>
-                {isListening && (
-                  <VoiceSession
-                    onEndSession={toggleListening}
-                    onSpeakingStateChange={setIsSpeaking}
-                  />
-                )}
-              </div>
-            )}
-          </div>
+          {/* Voice Session Logic */}
+          {isListening && (
+            <VoiceSession
+              onEndSession={toggleListening}
+              onSpeakingStateChange={setIsSpeaking}
+            />
+          )}
 
           {!isListening && (
             <>
