@@ -159,7 +159,7 @@ const AvatarCreation = () => {
                 className={styles.card}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+                transition={{ delay: 0.4, duration: 1.0, ease: "easeInOut" }}
             >
                 <div className={styles.cardHeader}>
                     <Upload className={styles.cardIcon} size={24} />
@@ -273,7 +273,7 @@ const AvatarCreation = () => {
                 className={styles.card}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
+                transition={{ delay: 0.8, duration: 1.0, ease: "easeInOut" }}
             >
                 <div className={styles.cardHeader}>
                     <Mic className={styles.cardIcon} size={24} />
@@ -324,7 +324,7 @@ const AvatarCreation = () => {
                 className={styles.card}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ delay: 1.2, duration: 1.0, ease: "easeInOut" }}
             >
                 <div className={styles.cardHeader}>
                     <Shield className={styles.cardIcon} size={24} />
