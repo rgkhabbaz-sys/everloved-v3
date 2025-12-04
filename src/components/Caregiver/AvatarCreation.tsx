@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Mic, Shield, Check, X } from 'lucide-react';
 import styles from './Caregiver.module.css';
+import { motion } from 'framer-motion';
 
 const AvatarCreation = () => {
     const [photos, setPhotos] = useState<string[]>([]);
@@ -154,7 +155,12 @@ const AvatarCreation = () => {
     return (
         <div className={styles.grid}>
             {/* Photo Upload */}
-            <div className={styles.card}>
+            <motion.div
+                className={styles.card}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+            >
                 <div className={styles.cardHeader}>
                     <Upload className={styles.cardIcon} size={24} />
                     <h2 className={styles.cardTitle}>Photo Upload</h2>
@@ -260,10 +266,15 @@ const AvatarCreation = () => {
                         </div>
                     </div>
                 )}
-            </div>
+            </motion.div>
 
             {/* Voice Engine */}
-            <div className={styles.card}>
+            <motion.div
+                className={styles.card}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+            >
                 <div className={styles.cardHeader}>
                     <Mic className={styles.cardIcon} size={24} />
                     <h2 className={styles.cardTitle}>Voice Engine</h2>
@@ -306,10 +317,15 @@ const AvatarCreation = () => {
                         </label>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Safety Settings */}
-            <div className={styles.card}>
+            <motion.div
+                className={styles.card}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+            >
                 <div className={styles.cardHeader}>
                     <Shield className={styles.cardIcon} size={24} />
                     <h2 className={styles.cardTitle}>Safety Settings</h2>
@@ -358,7 +374,7 @@ const AvatarCreation = () => {
                         </label>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Save Button */}
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
