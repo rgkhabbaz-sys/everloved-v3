@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Merriweather, Nunito } from 'next/font/google';
 import './globals.css';
 import NavBar from '@/components/Navigation/NavBar';
+import ErrorBoundary from '@/components/UI/ErrorBoundary';
 
 const merriweather = Merriweather({
   subsets: ['latin'],
@@ -28,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunito.className} ${merriweather.variable}`}>
-        <NavBar />
-        <main>{children}</main>
+        <ErrorBoundary>
+          <NavBar />
+          <main>{children}</main>
+        </ErrorBoundary>
       </body>
     </html>
   );

@@ -1,156 +1,32 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Upload, Mic, Shield, Check, X, Video } from 'lucide-react';
 import styles from './Caregiver.module.css';
 import { motion } from 'framer-motion';
+import { useAvatar } from '../../hooks/useAvatar';
 
 const AvatarCreation = () => {
-    const [photos, setPhotos] = useState<string[]>([]);
-    const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
-    const [voiceStyle, setVoiceStyle] = useState('gentle');
-    const [tones, setTones] = useState({ calm: true, jovial: true, authoritative: false });
-    const [identity, setIdentity] = useState({ name: '', relationship: '' });
-    const [boundaries, setBoundaries] = useState({ blockTravel: true, blockAlive: true, redirectConfusion: true });
-    const [isSaving, setIsSaving] = useState(false);
-    const [saveMessage, setSaveMessage] = useState('');
+    const {
+        photos,
+        selectedPhotoIndex,
+        setSelectedPhotoIndex,
+        voiceStyle,
+        setVoiceStyle,
+        tones,
+        toggleTone,
+        identity,
+        setIdentity,
+        boundaries,
+        toggleBoundary,
+        isSaving,
+        saveMessage,
+        handlePhotoUpload,
+        handleSave,
+        removePhoto
+    } = useAvatar();
+
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    // Load saved photos on mount
-    React.useEffect(() => {
-        const savedPhotos = localStorage.getItem('everloved_photos');
-        if (savedPhotos) {
-            const parsedPhotos = JSON.parse(savedPhotos);
-            setPhotos(parsedPhotos);
-
-            // Try to find the selected avatar in the list
-            const savedAvatar = localStorage.getItem('everloved_avatar');
-            if (savedAvatar) {
-                const index = parsedPhotos.indexOf(savedAvatar);
-                if (index !== -1) {
-                    setSelectedPhotoIndex(index);
-                }
-            }
-        }
-    }, []);
-
-    const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 800): Promise<string> => {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.src = base64Str;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx?.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7));
-            };
-        });
-    };
-
-    const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                if (event.target?.result) {
-                    try {
-                        const originalBase64 = event.target!.result as string;
-                        const compressedBase64 = await compressImage(originalBase64);
-
-                        setPhotos(prev => {
-                            const newPhotos = [...prev, compressedBase64];
-                            try {
-                                localStorage.setItem('everloved_photos', JSON.stringify(newPhotos));
-                            } catch (err) {
-                                console.error('Error saving photos list:', err);
-                                setSaveMessage('Error: Storage full');
-                            }
-                            return newPhotos;
-                        });
-                        // Auto-select the first photo if none is selected
-                        if (selectedPhotoIndex === null) {
-                            setSelectedPhotoIndex(0);
-                        }
-                    } catch (error) {
-                        console.error('Error compressing image:', error);
-                    }
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleSave = () => {
-        setIsSaving(true);
-        // Save to localStorage
-        console.log('Saving configuration...', { selectedPhotoIndex, photosLength: photos.length });
-
-        try {
-            if (selectedPhotoIndex === -1) {
-                console.log('Clearing avatar from localStorage (No Photo selected)');
-                localStorage.removeItem('everloved_avatar');
-            } else if (selectedPhotoIndex !== null && photos[selectedPhotoIndex]) {
-                console.log('Saving avatar to localStorage:', photos[selectedPhotoIndex].substring(0, 50) + '...');
-                localStorage.setItem('everloved_avatar', photos[selectedPhotoIndex]);
-            } else {
-                console.warn('No avatar selected or photo not found');
-            }
-
-            // Save boundaries
-            localStorage.setItem('everloved_boundaries', JSON.stringify(boundaries));
-            console.log('Saved boundaries:', boundaries);
-
-            // Simulate API call
-            setTimeout(() => {
-                setIsSaving(false);
-                setSaveMessage('Configuration saved successfully!');
-                setTimeout(() => setSaveMessage(''), 3000);
-            }, 1500);
-        } catch (error) {
-            console.error('Error saving to localStorage:', error);
-            setIsSaving(false);
-            setSaveMessage('Error saving! Image might be too large.');
-            setTimeout(() => setSaveMessage(''), 3000);
-        }
-    };
-
-    const toggleTone = (tone: keyof typeof tones) => {
-        setTones(prev => ({ ...prev, [tone]: !prev[tone] }));
-    };
-
-    const toggleBoundary = (boundary: keyof typeof boundaries) => {
-        setBoundaries(prev => ({ ...prev, [boundary]: !prev[boundary] }));
-    };
-
-    const removePhoto = (index: number) => {
-        setPhotos(prev => {
-            const newPhotos = prev.filter((_, i) => i !== index);
-            localStorage.setItem('everloved_photos', JSON.stringify(newPhotos));
-            return newPhotos;
-        });
-        if (selectedPhotoIndex === index) {
-            setSelectedPhotoIndex(null);
-            localStorage.removeItem('everloved_avatar'); // Remove selection if deleted
-        }
-        if (selectedPhotoIndex !== null && selectedPhotoIndex > index) setSelectedPhotoIndex(selectedPhotoIndex - 1);
-    };
 
     return (
         <div className={styles.grid}>

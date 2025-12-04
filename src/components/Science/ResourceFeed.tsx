@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import PageLayout from '../UI/PageLayout';
 import ArticleCard from './ArticleCard';
 import { motion } from 'framer-motion';
 import styles from './Science.module.css';
@@ -105,25 +106,27 @@ const ResourceFeed = () => {
                 initial="hidden"
                 animate="show"
             >
-                <header className={styles.header}>
-                    <h1 className={styles.title}>New Science</h1>
-                    <p className={styles.subtitle}>
-                        Curated research, clinical updates, and therapeutic resources for the modern caregiver.
-                    </p>
-                </header>
+                <PageLayout>
+                    <header className={styles.header}>
+                        <h1 className={styles.title}>New Science</h1>
+                        <p className={styles.subtitle}>
+                            Curated research, clinical updates, and therapeutic resources for the modern caregiver.
+                        </p>
+                    </header>
 
-                <div className={styles.grid}>
-                    {articles.map((article) => (
-                        <motion.div key={article.id} variants={item}>
-                            <ArticleCard
-                                title={article.title}
-                                summary={article.summary}
-                                date={article.date}
-                                category={article.category}
-                            />
-                        </motion.div>
-                    ))}
-                </div>
+                    <div className={styles.grid}>
+                        {articles.map((article) => (
+                            <motion.div key={article.id} variants={item}>
+                                <ArticleCard
+                                    title={article.title}
+                                    summary={article.summary}
+                                    date={article.date}
+                                    category={article.category}
+                                />
+                            </motion.div>
+                        ))}
+                    </div>
+                </PageLayout>
             </motion.div>
         </div>
     );

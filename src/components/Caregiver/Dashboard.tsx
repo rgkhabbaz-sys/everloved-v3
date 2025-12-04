@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import PageTransition from '../UI/PageTransition';
+import PageLayout from '../UI/PageLayout';
 import AvatarCreation from './AvatarCreation';
 import CaregiverMonitoring from './CaregiverMonitoring';
 import CognitiveAnalytics from './CognitiveAnalytics';
@@ -38,35 +39,37 @@ const Dashboard = () => {
             </div>
 
             <PageTransition className={styles.dashboard}>
-                <header className={styles.header}>
-                    <h1 className={styles.title}>Caregiver Command Center</h1>
-                    <p className={styles.subtitle}>Configure avatar, monitor interactions, and analyze well-being.</p>
-                </header>
+                <PageLayout>
+                    <header className={styles.header}>
+                        <h1 className={styles.title}>Caregiver Command Center</h1>
+                        <p className={styles.subtitle}>Configure avatar, monitor interactions, and analyze well-being.</p>
+                    </header>
 
-                <div className={styles.tabsContainer}>
-                    <button
-                        className={`${styles.tabButton} ${activeTab === 'configuration' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('configuration')}
-                    >
-                        Avatar Configuration
-                    </button>
-                    <button
-                        className={`${styles.tabButton} ${activeTab === 'monitoring' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('monitoring')}
-                    >
-                        Monitoring Dashboard
-                    </button>
-                    <button
-                        className={`${styles.tabButton} ${activeTab === 'analytics' ? styles.activeTab : ''}`}
-                        onClick={() => setActiveTab('analytics')}
-                    >
-                        Cognitive Analytics
-                    </button>
-                </div>
+                    <div className={styles.tabsContainer}>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'configuration' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('configuration')}
+                        >
+                            Avatar Configuration
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'monitoring' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('monitoring')}
+                        >
+                            Monitoring Dashboard
+                        </button>
+                        <button
+                            className={`${styles.tabButton} ${activeTab === 'analytics' ? styles.activeTab : ''}`}
+                            onClick={() => setActiveTab('analytics')}
+                        >
+                            Cognitive Analytics
+                        </button>
+                    </div>
 
-                {activeTab === 'configuration' && <AvatarCreation />}
-                {activeTab === 'monitoring' && <CaregiverMonitoring />}
-                {activeTab === 'analytics' && <CognitiveAnalytics />}
+                    {activeTab === 'configuration' && <AvatarCreation />}
+                    {activeTab === 'monitoring' && <CaregiverMonitoring />}
+                    {activeTab === 'analytics' && <CognitiveAnalytics />}
+                </PageLayout>
             </PageTransition>
         </div>
     );

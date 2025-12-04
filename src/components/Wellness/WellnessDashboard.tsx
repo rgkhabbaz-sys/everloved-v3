@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Heart, Moon, Activity, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
 import MetricCard from './MetricCard';
+import PageLayout from '../UI/PageLayout';
 import styles from './Wellness.module.css';
 
 const container = {
@@ -66,62 +67,64 @@ const WellnessDashboard = () => {
                 initial="hidden"
                 animate="show"
             >
-                <header className={styles.header}>
-                    <h1 className={styles.title}>Health & Wellness</h1>
-                    <p className={styles.subtitle}>
-                        Real-time monitoring of vital signs, sleep quality, and emotional well-being.
-                    </p>
-                </header>
+                <PageLayout>
+                    <header className={styles.header}>
+                        <h1 className={styles.title}>Health & Wellness</h1>
+                        <p className={styles.subtitle}>
+                            Real-time monitoring of vital signs, sleep quality, and emotional well-being.
+                        </p>
+                    </header>
 
-                <div className={styles.grid}>
-                    <motion.div variants={item}>
-                        <MetricCard
-                            title="Heart Rate"
-                            value="72"
-                            unit="BPM"
-                            icon={Heart}
-                            status="good"
-                            statusText="Normal Range"
-                            data={heartRateData}
-                        />
-                    </motion.div>
+                    <div className={styles.grid}>
+                        <motion.div variants={item}>
+                            <MetricCard
+                                title="Heart Rate"
+                                value="72"
+                                unit="BPM"
+                                icon={Heart}
+                                status="good"
+                                statusText="Normal Range"
+                                data={heartRateData}
+                            />
+                        </motion.div>
 
-                    <motion.div variants={item}>
-                        <MetricCard
-                            title="Sleep Quality"
-                            value="7.5"
-                            unit="Hours"
-                            icon={Moon}
-                            status="good"
-                            statusText="Restful Sleep"
-                            data={sleepData}
-                        />
-                    </motion.div>
+                        <motion.div variants={item}>
+                            <MetricCard
+                                title="Sleep Quality"
+                                value="7.5"
+                                unit="Hours"
+                                icon={Moon}
+                                status="good"
+                                statusText="Restful Sleep"
+                                data={sleepData}
+                            />
+                        </motion.div>
 
-                    <motion.div variants={item}>
-                        <MetricCard
-                            title="Daily Activity"
-                            value="2,450"
-                            unit="Steps"
-                            icon={Activity}
-                            status="warning"
-                            statusText="Below Target"
-                            data={[20, 30, 40, 35, 25, 15, 10]}
-                        />
-                    </motion.div>
+                        <motion.div variants={item}>
+                            <MetricCard
+                                title="Daily Activity"
+                                value="2,450"
+                                unit="Steps"
+                                icon={Activity}
+                                status="warning"
+                                statusText="Below Target"
+                                data={[20, 30, 40, 35, 25, 15, 10]}
+                            />
+                        </motion.div>
 
-                    <motion.div variants={item}>
-                        <MetricCard
-                            title="Cognitive State"
-                            value="Stable"
-                            unit=""
-                            icon={Brain}
-                            status="neutral"
-                            statusText="No significant changes"
-                            data={moodData}
-                        />
-                    </motion.div>
-                </div>
+                        <motion.div variants={item}>
+                            <MetricCard
+                                title="Cognitive State"
+                                value="Stable"
+                                unit=""
+                                icon={Brain}
+                                status="neutral"
+                                statusText="No significant changes"
+                                data={moodData}
+                            />
+                        </motion.div>
+                    </div>
+                </PageLayout>
             </motion.div>
         </div>
     );

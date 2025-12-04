@@ -34,9 +34,9 @@ const NavBar = () => {
                             >
                                 <motion.div
                                     whileTap={{ scale: 0.95 }}
-                                    style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                                    style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}
                                 >
-                                    <Icon size={20} />
+                                    <Icon size={18} />
                                     <span>{item.name}</span>
                                 </motion.div>
                             </Link>
