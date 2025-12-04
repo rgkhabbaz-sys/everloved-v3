@@ -93,7 +93,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  /* transform: translate(-50%, -50%); handled by Framer Motion */
   width: 560px;
   /* Doubled from 280px */
   height: 760px;

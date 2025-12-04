@@ -107,16 +107,11 @@ export default function Home() {
       {avatar && (
         <motion.div
           className={styles.avatarBox}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{
-            opacity: [0.6, 1, 0.6],
-            scale: [0.98, 1.03, 0.98]
-          }}
+          initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-50%" }}
+          animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
           transition={{
-            duration: 6,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut"
+            duration: 2.0,
+            ease: "easeOut"
           }}
         >
           <img
