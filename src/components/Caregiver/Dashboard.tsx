@@ -15,8 +15,8 @@ const Dashboard = () => {
         <div className={styles.container}>
             <div className={styles.backgroundWrapper}>
                 <Image
-                    src="/caregiver-bg.jpg"
-                    alt="Serene Monastery Landscape"
+                    src="/thailand-bg.png"
+                    alt="Serene Thailand Landscape"
                     fill
                     className={styles.backgroundImage}
                     priority
