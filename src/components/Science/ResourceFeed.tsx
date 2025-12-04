@@ -78,7 +78,7 @@ const ResourceFeed = () => {
         <div className={styles.container}>
             <div className={styles.backgroundWrapper}>
                 <Image
-                    src="/science-bg.jpg"
+                    src="/science-bg-new.png"
                     alt="Dramatic Cliffside Landscape"
                     fill
                     className={styles.backgroundImage}
