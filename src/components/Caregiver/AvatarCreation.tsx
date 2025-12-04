@@ -387,13 +387,26 @@ const AvatarCreation = () => {
                     <Video className={styles.cardIcon} size={24} />
                     <h2 className={styles.cardTitle}>Video Generation</h2>
                 </div>
-                <div className={styles.uploadZone} style={{ borderColor: 'rgba(147, 51, 234, 0.3)', background: 'rgba(147, 51, 234, 0.05)' }}>
-                    <Upload size={48} style={{ color: '#a855f7' }} />
-                    <p>Upload photos for GenAI Video</p>
-                    <button className={styles.tabButton} style={{ background: 'rgba(147, 51, 234, 0.2)', marginTop: '0.5rem', color: '#d8b4fe' }}>
-                        Select Source Photos
-                    </button>
-                    <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem' }}>Creates immersive video memories</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    {/* Photo to Video */}
+                    <div className={styles.uploadZone} style={{ borderColor: 'rgba(147, 51, 234, 0.3)', background: 'rgba(147, 51, 234, 0.05)', padding: '2rem' }}>
+                        <Upload size={32} style={{ color: '#a855f7' }} />
+                        <p style={{ fontWeight: 600, marginTop: '1rem' }}>Photo to Video</p>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '1rem' }}>GenAI Memories</p>
+                        <button className={styles.tabButton} style={{ background: 'rgba(147, 51, 234, 0.2)', color: '#d8b4fe', width: '100%', fontSize: '0.9rem' }}>
+                            Select Photos
+                        </button>
+                    </div>
+
+                    {/* Upload Video */}
+                    <div className={styles.uploadZone} style={{ borderColor: 'rgba(59, 130, 246, 0.3)', background: 'rgba(59, 130, 246, 0.05)', padding: '2rem' }}>
+                        <Video size={32} style={{ color: '#3b82f6' }} />
+                        <p style={{ fontWeight: 600, marginTop: '1rem' }}>Upload Video</p>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: '1rem' }}>Existing Clips</p>
+                        <button className={styles.tabButton} style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#93c5fd', width: '100%', fontSize: '0.9rem' }}>
+                            Select Video
+                        </button>
+                    </div>
                 </div>
             </motion.div>
 
