@@ -39,8 +39,8 @@ const WellnessDashboard = () => {
         <div className={styles.container}>
             <div className={styles.backgroundWrapper}>
                 <Image
-                    src="/wellness-bg.png"
-                    alt="Serene Mountain Landscape"
+                    src="/wellness-bg-new.jpg"
+                    alt="Serene Waterfall Landscape"
                     fill
                     className={styles.backgroundImage}
                     priority
