@@ -38,13 +38,25 @@ const WellnessDashboard = () => {
     return (
         <div className={styles.container}>
             <div className={styles.backgroundWrapper}>
-                <Image
-                    src="/wellness-bg-new.jpg"
-                    alt="Serene Waterfall Landscape"
-                    fill
-                    className={styles.backgroundImage}
-                    priority
-                />
+                <motion.div
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1.3 }}
+                    transition={{
+                        duration: 35,
+                        repeat: Infinity,
+                        repeatType: 'reverse',
+                        ease: 'easeInOut',
+                    }}
+                    style={{ width: '100%', height: '100%', position: 'absolute' }}
+                >
+                    <Image
+                        src="/wellness-bg-new.jpg"
+                        alt="Serene Waterfall Landscape"
+                        fill
+                        className={styles.backgroundImage}
+                        priority
+                    />
+                </motion.div>
                 <div className={styles.overlay} />
             </div>
 
