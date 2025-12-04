@@ -13,7 +13,9 @@
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 999px;
-    padding: 6px 16px;
+    padding: 4px 32px;
+    min-width: 600px;
+    /* Spread out more */
     box-shadow:
         0 20px 40px -10px rgba(0, 0, 0, 0.1),
         0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -37,7 +39,7 @@
 }
 
 .container {
-    width: auto;
+    width: 100%;
     padding: 0;
     display: flex;
     align-items: center;
@@ -50,7 +52,9 @@
 
 .links {
     display: flex;
-    gap: 4px;
+    gap: 12px;
+    width: 100%;
+    justify-content: space-between;
 }
 
 .link {
@@ -64,7 +68,7 @@
     font-weight: 700;
     /* Bolder text */
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    padding: 12px 20px;
+    padding: 8px 16px;
     /* Larger touch target */
     border-radius: 24px;
     position: relative;
