@@ -38,7 +38,7 @@
 .feedContainer {
     position: relative;
     z-index: 10;
-    padding: 4rem 2rem calc(var(--nav-height) + 4rem);
+    padding: 8rem 2rem 4rem;
     max-width: 1400px;
     margin: 0 auto;
 }
