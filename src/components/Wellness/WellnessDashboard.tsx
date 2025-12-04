@@ -22,7 +22,7 @@ const container = {
     show: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.1
+            staggerChildren: 0.5
         }
     }
 };
@@ -33,8 +33,8 @@ const item = {
         opacity: 1,
         y: 0,
         transition: {
-            duration: 0.8,
-            ease: "easeOut" as const
+            duration: 2.0,
+            ease: "easeInOut" as const
         }
     }
 };
