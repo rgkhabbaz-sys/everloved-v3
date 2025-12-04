@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Upload, Mic, Shield, Check, X } from 'lucide-react';
+import { Upload, Mic, Shield, Check, X, Video } from 'lucide-react';
 import styles from './Caregiver.module.css';
 import { motion } from 'framer-motion';
 
@@ -373,6 +373,27 @@ const AvatarCreation = () => {
                             /> Redirect confusion
                         </label>
                     </div>
+                </div>
+            </motion.div>
+
+            {/* Video Generation */}
+            <motion.div
+                className={styles.card}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.6, duration: 1.0, ease: "easeInOut" }}
+            >
+                <div className={styles.cardHeader}>
+                    <Video className={styles.cardIcon} size={24} />
+                    <h2 className={styles.cardTitle}>Video Generation</h2>
+                </div>
+                <div className={styles.uploadZone} style={{ borderColor: 'rgba(147, 51, 234, 0.3)', background: 'rgba(147, 51, 234, 0.05)' }}>
+                    <Upload size={48} style={{ color: '#a855f7' }} />
+                    <p>Upload photos for GenAI Video</p>
+                    <button className={styles.tabButton} style={{ background: 'rgba(147, 51, 234, 0.2)', marginTop: '0.5rem', color: '#d8b4fe' }}>
+                        Select Source Photos
+                    </button>
+                    <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '0.5rem' }}>Creates immersive video memories</p>
                 </div>
             </motion.div>
 
