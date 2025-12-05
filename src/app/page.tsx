@@ -28,7 +28,6 @@ export default function Home() {
   }, []);
 
   const toggleListening = () => {
-    console.log('toggleListening called, current state:', isListening);
     setIsListening(!isListening);
     setIsSpeaking(false);
   };
