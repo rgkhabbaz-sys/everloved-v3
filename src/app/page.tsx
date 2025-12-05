@@ -6,19 +6,13 @@ import VoiceSession from '../components/Patient/VoiceSession';
 import TherapyModes from '../components/Patient/TherapyModes';
 import styles from './page.module.css';
 
-import Link from 'next/link';
-import { Heart, Settings, BookOpen, Activity } from 'lucide-react';
+import Link from 'next/link'; // Still used? No, MotionLink removed.
+// import { Heart, Settings, BookOpen, Activity } from 'lucide-react'; // Removing these
 
 import { motion } from 'framer-motion';
 
-const MotionLink = motion(Link);
-
-const navItems = [
-  { name: 'Patient Comfort', path: '/', icon: Heart },
-  { name: 'Caregiver Control', path: '/caregiver', icon: Settings },
-  { name: 'New Science', path: '/science', icon: BookOpen },
-  { name: 'Health & Wellness', path: '/wellness', icon: Activity },
-];
+// const MotionLink = motion(Link); 
+// const navItems = ... removed
 
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
@@ -65,44 +59,7 @@ export default function Home() {
         <div className={styles.overlay} />
       </div>
 
-      {/* Logo */}
-      <motion.div
-        className={styles.logo}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.5, duration: 0.8 }}
-      >
-        EverLoved
-      </motion.div>
-
-      {/* Vertical Sidebar Navigation */}
-      <nav className={styles.sidebar}>
-        {navItems.map((item, index) => {
-          const Icon = item.icon;
-          const isActive = item.path === '/';
-
-          return (
-            <MotionLink
-              key={item.path}
-              href={item.path}
-              className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''}`}
-              initial={{ opacity: 0, x: 250 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                delay: 0.5 + (index * 0.2),
-                duration: 2.5,
-                ease: [0.22, 1, 0.36, 1]
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <div className={styles.iconWrapper}>
-                <Icon size={24} />
-              </div>
-              <span className={styles.linkText}>{item.name}</span>
-            </MotionLink>
-          );
-        })}
-      </nav>
+      {/* Logo and Nav are now handled by global NavBar component */}
 
       {/* Floating Avatar Box */}
       {avatar && (

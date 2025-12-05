@@ -16,7 +16,7 @@ const NavBar = () => {
         { name: 'Health & Wellness', path: '/wellness', icon: Activity },
     ];
 
-    if (pathname === '/') return null;
+    // if (pathname === '/') return null;
 
     return (
         <nav className={styles.nav}>
