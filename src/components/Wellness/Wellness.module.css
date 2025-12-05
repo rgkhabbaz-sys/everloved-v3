@@ -53,7 +53,8 @@
     /* Clinical dashboards often align left */
     padding-left: 1rem;
     animation: fadeIn 1s ease-out;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(30, 58, 138, 0.2);
+    /* Dark blue border */
     padding-bottom: 1.5rem;
 }
 
@@ -61,21 +62,23 @@
     font-family: 'Merriweather', serif;
     font-size: 2.5rem;
     /* Slightly smaller, more professional */
-    font-weight: 300;
+    font-weight: 700;
     margin-bottom: 0.5rem;
-    color: #fff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: #1e3a8a;
+    /* Navy Blue */
+    text-shadow: none;
     letter-spacing: -0.02em;
 }
 
 .subtitle {
     font-family: 'Nunito', sans-serif;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
+    color: #334155;
+    /* Slate 700 */
+    font-size: 1.1rem;
     max-width: 800px;
     line-height: 1.5;
-    font-weight: 500;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    text-shadow: none;
 }
 
 .grid {
@@ -94,11 +97,11 @@
 }
 
 .card {
-    background: rgba(10, 10, 15, 0.4);
-    /* Very transparent dark glass */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.65);
+    /* Light Frosted Glass */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 16px;
     /* Tighter radius */
     padding: 1.5rem;
@@ -107,14 +110,15 @@
     height: 100%;
     position: relative;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.1);
+    /* Subtle blue shadow */
 }
 
 .card:hover {
-    background: rgba(15, 15, 20, 0.5);
+    background: rgba(255, 255, 255, 0.85);
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+    border-color: #fff;
 }
 
 .cardHeader {
@@ -127,8 +131,9 @@
 .cardTitle {
     font-family: 'Nunito', sans-serif;
     font-size: 0.9rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.6);
+    font-weight: 800;
+    color: #1e3a8a;
+    /* Navy Blue */
     text-transform: uppercase;
     letter-spacing: 0.05em;
     line-height: 1.4;
@@ -136,12 +141,15 @@
 
 .iconWrapper {
     padding: 8px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(30, 58, 138, 0.1);
+    /* Light blue bg for icons */
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid transparent;
+    border: 1px solid rgba(30, 58, 138, 0.1);
+    color: #1e3a8a;
+    /* Navy Blue Icon */
 }
 
 .mainContent {
@@ -166,8 +174,9 @@
     font-family: 'Roboto Mono', monospace;
     /* Monospace for data */
     font-size: 2rem;
-    font-weight: 500;
-    color: #fff;
+    font-weight: 600;
+    color: #0f172a;
+    /* Slate 900 (Very Dark Blue) */
     line-height: 1;
     letter-spacing: -0.03em;
 }
@@ -175,34 +184,41 @@
 .unit {
     font-family: 'Nunito', sans-serif;
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: #475569;
+    /* Slate 600 */
     margin-left: 0.5rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .trend {
     font-family: 'Nunito', sans-serif;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 4px;
+    color: #334155;
+    /* Slate 700 */
 }
 
 .sparklineContainer {
     width: 100px;
     height: 40px;
-    opacity: 0.8;
+    opacity: 1;
+    /* Full opacity for sparklines */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .context {
     font-family: 'Nunito', sans-serif;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;
+    color: #475569;
+    /* Slate 600 */
     line-height: 1.4;
     margin-top: auto;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid rgba(30, 58, 138, 0.1);
+    font-weight: 500;
 }
 
 .statusBar {
