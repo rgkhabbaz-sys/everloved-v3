@@ -11,6 +11,15 @@ import { Heart, Settings, BookOpen, Activity } from 'lucide-react';
 
 import { motion } from 'framer-motion';
 
+const MotionLink = motion(Link);
+
+const navItems = [
+  { name: 'Patient Comfort', path: '/', icon: Heart },
+  { name: 'Caregiver Control', path: '/caregiver', icon: Settings },
+  { name: 'New Science', path: '/science', icon: BookOpen },
+  { name: 'Health & Wellness', path: '/wellness', icon: Activity },
+];
+
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -29,13 +38,6 @@ export default function Home() {
     setIsListening(!isListening);
     setIsSpeaking(false);
   };
-
-  const navItems = [
-    { name: 'Patient Comfort', path: '/', icon: Heart },
-    { name: 'Caregiver Control', path: '/caregiver', icon: Settings },
-    { name: 'New Science', path: '/science', icon: BookOpen },
-    { name: 'Health & Wellness', path: '/wellness', icon: Activity },
-  ];
 
   return (
     <div className={styles.container}>
@@ -78,7 +80,6 @@ export default function Home() {
         {navItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = item.path === '/';
-          const MotionLink = motion(Link);
 
           return (
             <MotionLink
