@@ -18,10 +18,10 @@
 
 .backgroundImage {
     object-fit: cover;
-    opacity: 0.4;
-    /* Reduced opacity for higher contrast UI */
-    filter: grayscale(40%) contrast(1.1);
-    /* More clinical, less vibrant */
+    opacity: 0.85;
+    /* Increased opacity for visibility */
+    filter: contrast(1.1) saturate(1.1);
+    /* Removed grayscale, added saturation for cheeriness */
 }
 
 .overlay {
@@ -31,9 +31,10 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(to bottom,
-            rgba(9, 9, 11, 0.7) 0%,
-            rgba(9, 9, 11, 0.5) 40%,
-            rgba(9, 9, 11, 0.9) 100%);
+            rgba(9, 9, 11, 0.3) 0%,
+            rgba(9, 9, 11, 0.1) 40%,
+            rgba(9, 9, 11, 0.5) 100%);
+    /* Much lighter overlay */
     z-index: 1;
     pointer-events: none;
 }
