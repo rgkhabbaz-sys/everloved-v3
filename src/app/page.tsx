@@ -54,8 +54,8 @@ export default function Home() {
           style={{ width: '100%', height: '100%', position: 'absolute' }}
         >
           <Image
-            src="/lake-tahoe-bg.jpg"
-            alt="Serene Lake Tahoe Landscape"
+            src="/swiss-alps-bg.png"
+            alt="Cheery Swiss Alps Landscape"
             fill
             priority
             className={styles.backgroundImage}
