@@ -55,8 +55,8 @@ const WellnessDashboard = () => {
                     style={{ width: '100%', height: '100%', position: 'absolute' }}
                 >
                     <Image
-                        src="/wellness-bg-uploaded.jpg"
-                        alt="Serene Nature Landscape"
+                        src="/wellness-bg-final.jpg"
+                        alt="Grand Canyon Landscape"
                         fill
                         className={styles.backgroundImage}
                         priority
