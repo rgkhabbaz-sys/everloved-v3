@@ -5,14 +5,16 @@ import { MessageCircle, Music, Wind, Video } from 'lucide-react';
 import styles from './Patient.module.css';
 
 interface TherapyModesProps {
-    currentMode: 'clinical' | 'casual';
-    onModeSelect: (mode: 'clinical' | 'casual') => void;
+    currentMode: 'clinical' | 'video' | 'music' | 'meditation';
+    onModeSelect: (mode: 'clinical' | 'video' | 'music' | 'meditation') => void;
 }
 
 const TherapyModes: React.FC<TherapyModesProps> = ({ currentMode, onModeSelect }) => {
     const modes = [
-        { id: 'clinical' as const, label: 'Clinical', icon: MessageCircle },
-        { id: 'casual' as const, label: 'Casual', icon: Music },
+        { id: 'clinical' as const, label: 'Conversation', icon: MessageCircle },
+        { id: 'video' as const, label: 'Video', icon: Video },
+        { id: 'music' as const, label: 'Music', icon: Music },
+        { id: 'meditation' as const, label: 'Calm', icon: Wind },
     ];
 
     return (

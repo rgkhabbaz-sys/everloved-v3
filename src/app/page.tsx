@@ -16,14 +16,7 @@ import { motion } from 'framer-motion';
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false); // New state for API call
-  const [mode, setMode] = useState<'clinical' | 'casual'>('clinical');
-  const [logs, setLogs] = useState<string[]>([]);
-
-  const addLog = (msg: string) => {
-    console.log(msg);
-    setLogs(prev => [...prev.slice(-4), msg]); // Keep last 5 logs
-  };
+  const [mode, setMode] = useState<'clinical' | 'video' | 'music' | 'meditation'>('clinical');
   const [avatar, setAvatar] = useState<string | null>(null);
 
   const recognitionRef = useRef<any>(null);
@@ -52,25 +45,23 @@ export default function Home() {
     recognition.lang = 'en-US';
 
     recognition.onstart = () => {
-      addLog('Speech recognition started');
+      console.log('Speech recognition started');
       setIsListening(true);
     };
 
     recognition.onend = () => {
-      addLog('Speech recognition ended');
+      console.log('Speech recognition ended');
       setIsListening(false);
     };
 
     recognition.onresult = async (event: any) => {
       const transcript = event.results[0][0].transcript;
-      addLog(`Recognized speech: ${transcript}`);
+      console.log(`Recognized speech: ${transcript}`);
       await processSpeech(transcript);
     };
 
     recognition.onerror = (event: any) => {
-      const errorMsg = `Speech error: ${event.error}`;
-      console.error(errorMsg);
-      addLog(errorMsg);
+      console.error('Speech recognition error:', event.error);
       if (event.error === 'not-allowed') {
         alert('Microphone blocked! Allow access.');
       }
@@ -96,7 +87,6 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error processing speech:', error);
-      addLog(`Error processing: ${error}`);
       speakResponse("I'm having a little trouble hearing you. Can you say that again?");
     } finally {
       setIsProcessing(false);
@@ -132,7 +122,6 @@ export default function Home() {
       audio.play();
     } catch (error) {
       console.error('Error playing TTS:', error);
-      addLog(`TTS Error: ${error}`);
       setIsSpeaking(false);
       // Fallback or just restart listening?
       setTimeout(handleStartListening, 200);
@@ -260,24 +249,6 @@ export default function Home() {
           </motion.div>
 
         </div>
-      </div>
-      {/* Debug Logs Overlay */}
-      <div style={{
-        position: 'fixed',
-        bottom: '10px',
-        left: '10px',
-        background: 'rgba(0,0,0,0.8)',
-        color: '#0f0',
-        padding: '10px',
-        borderRadius: '5px',
-        fontSize: '12px',
-        maxWidth: '300px',
-        zIndex: 9999,
-        pointerEvents: 'none'
-      }}>
-        {logs.map((log, i) => (
-          <div key={i}>{log}</div>
-        ))}
       </div>
     </div>
   );
