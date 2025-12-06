@@ -111,11 +111,12 @@ export default function Home() {
   };
   const speakResponse = async (text: string) => {
     try {
+      const gender = activeProfile?.gender || 'female';
       // Fetch audio from our server-side ElevenLabs endpoint
       const response = await fetch('/api/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({ message: text, gender }),
       });
 
       if (!response.ok) {

@@ -222,7 +222,16 @@ const AvatarCreation = () => {
                         placeholder="Relationship (e.g. Mother)"
                         value={identity.relationship}
                         onChange={(e) => setIdentity(prev => ({ ...prev, relationship: e.target.value }))}
+                        style={{ marginBottom: '0.5rem' }}
                     />
+                    <select
+                        className={styles.select}
+                        value={identity.gender}
+                        onChange={(e) => setIdentity(prev => ({ ...prev, gender: e.target.value as 'male' | 'female' }))}
+                    >
+                        <option value="female">Female (Warm)</option>
+                        <option value="male">Male (Deep)</option>
+                    </select>
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Boundaries</label>

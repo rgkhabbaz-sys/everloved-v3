@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const { message, voiceId = "21m00Tcm4TlvDq8ikWAM" } = await req.json(); // Default to 'Rachel'
+        const { message, gender } = await req.json();
 
         if (!message) {
             return NextResponse.json(
@@ -19,8 +19,19 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        // Voice ID Selection Logic
+        // Defaults: Rachel (Female) | Antoni (Male)
+        const DEFAULT_FEMALE_ID = "21m00Tcm4TlvDq8ikWAM";
+        const DEFAULT_MALE_ID = "ErXwobaYiN019PkySvjV";
+
+        let selectedVoiceId = process.env.ELEVENLABS_VOICE_ID_FEMALE || DEFAULT_FEMALE_ID; // Default to female
+
+        if (gender === 'male') {
+            selectedVoiceId = process.env.ELEVENLABS_VOICE_ID_MALE || DEFAULT_MALE_ID;
+        }
+
         const response = await fetch(
-            `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
+            `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}/stream`,
             {
                 method: 'POST',
                 headers: {

@@ -6,7 +6,7 @@ export interface AvatarState {
     selectedPhotoIndex: number | null;
     voiceStyle: string;
     tones: { calm: boolean; jovial: boolean; authoritative: boolean };
-    identity: { name: string; relationship: string };
+    identity: { name: string; relationship: string; gender: 'male' | 'female' };
     boundaries: { blockTravel: boolean; blockAlive: boolean; redirectConfusion: boolean };
     isSaving: boolean;
     saveMessage: string;
@@ -17,7 +17,11 @@ export const useAvatar = () => {
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
     const [voiceStyle, setVoiceStyle] = useState('gentle');
     const [tones, setTones] = useState({ calm: true, jovial: true, authoritative: false });
-    const [identity, setIdentity] = useState({ name: '', relationship: '' });
+    const [identity, setIdentity] = useState<{ name: string; relationship: string; gender: 'male' | 'female' }>({
+        name: '',
+        relationship: '',
+        gender: 'female'
+    });
     const [boundaries, setBoundaries] = useState({ blockTravel: true, blockAlive: true, redirectConfusion: true });
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
@@ -102,6 +106,7 @@ export const useAvatar = () => {
                 imageUrl: activeImage,
                 name: identity.name,
                 relation: identity.relationship,
+                gender: identity.gender,
                 boundaries: JSON.stringify(boundaries), // Serialize boundaries for easy prompt injection
             };
 
