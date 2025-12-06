@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
                 },
                 body: JSON.stringify({
                     text: message,
-                    model_id: "eleven_monolingual_v2",
+                    model_id: "eleven_multilingual_v2",
                     voice_settings: {
                         stability: 0.5,
                         similarity_boost: 0.75,
