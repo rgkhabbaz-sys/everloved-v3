@@ -221,7 +221,23 @@ const AvatarCreation = () => {
                         className={styles.input}
                         placeholder="Relationship (e.g. Mother)"
                         value={identity.relationship}
-                        onChange={(e) => setIdentity(prev => ({ ...prev, relationship: e.target.value }))}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            const lower = val.toLowerCase();
+                            let newGender = identity.gender;
+
+                            // Simple heuristic for auto-gender detection
+                            const maleTerms = ['father', 'dad', 'grandpa', 'grandfather', 'husband', 'brother', 'son', 'uncle', 'nephew'];
+                            const femaleTerms = ['mother', 'mom', 'grandma', 'grandmother', 'wife', 'sister', 'daughter', 'aunt', 'niece'];
+
+                            if (maleTerms.some(term => lower.includes(term))) {
+                                newGender = 'male';
+                            } else if (femaleTerms.some(term => lower.includes(term))) {
+                                newGender = 'female';
+                            }
+
+                            setIdentity(prev => ({ ...prev, relationship: val, gender: newGender }));
+                        }}
                         style={{ marginBottom: '0.5rem' }}
                     />
                     <select
