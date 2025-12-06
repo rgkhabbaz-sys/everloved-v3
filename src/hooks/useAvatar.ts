@@ -1,12 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { compressImage } from '../utils/imageUtils';
 
+export interface Identity {
+    name: string;
+    relationship: string;
+    gender: 'male' | 'female';
+    patientName: string;
+    lifeStory: string;
+}
+
 export interface AvatarState {
     photos: string[];
     selectedPhotoIndex: number | null;
     voiceStyle: string;
     tones: { calm: boolean; jovial: boolean; authoritative: boolean };
-    identity: { name: string; relationship: string; gender: 'male' | 'female'; patientName: string; lifeStory: string };
+    identity: Identity;
     boundaries: { blockTravel: boolean; blockAlive: boolean; redirectConfusion: boolean };
     isSaving: boolean;
     saveMessage: string;
@@ -17,7 +25,7 @@ export const useAvatar = () => {
     const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
     const [voiceStyle, setVoiceStyle] = useState('gentle');
     const [tones, setTones] = useState({ calm: true, jovial: true, authoritative: false });
-    const [identity, setIdentity] = useState<{ name: string; relationship: string; gender: 'male' | 'female'; patientName: string }>({
+    const [identity, setIdentity] = useState<Identity>({
         name: '',
         relationship: '',
         gender: 'female',
