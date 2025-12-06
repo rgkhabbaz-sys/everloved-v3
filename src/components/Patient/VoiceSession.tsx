@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './Patient.module.css';
 import { useMicVAD, utils } from "@ricky0123/vad-react";
+import { Mic } from 'lucide-react';
 
 interface VoiceSessionProps {
     onEndSession: () => void;
@@ -281,7 +282,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                         onClick={handleStartSession}
                         className={styles.startButton}
                     >
-                        Start Conversation
+                        <Mic size={32} />
                     </button>
                     {error && <span className={styles.errorMessage} style={{ marginTop: '1rem' }}>{error}</span>}
                 </div>
