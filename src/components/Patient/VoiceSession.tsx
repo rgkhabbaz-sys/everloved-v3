@@ -74,7 +74,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
     // VAD Hook
     const vad = useMicVAD({
         startOnLoad: false,
-        redemptionFrames: 20,
+        redemptionMs: 500,
         onSpeechStart: () => {
             if (!isSessionActive) return;
 
