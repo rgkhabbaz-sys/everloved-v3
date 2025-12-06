@@ -46,21 +46,26 @@ export default function Home() {
     recognition.lang = 'en-US';
 
     recognition.onstart = () => {
+      console.log('Speech recognition started');
       setIsListening(true);
     };
 
     recognition.onend = () => {
+      console.log('Speech recognition ended');
       setIsListening(false);
     };
 
     recognition.onresult = async (event: any) => {
       const transcript = event.results[0][0].transcript;
-      console.log('User said:', transcript);
+      console.log('Recognized speech:', transcript);
       await processSpeech(transcript);
     };
 
     recognition.onerror = (event: any) => {
-      console.error('Speech recognition error', event.error);
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'not-allowed') {
+        alert('Microphone access blocked. Please allow microphone access in your browser settings.');
+      }
       setIsListening(false);
     };
 
