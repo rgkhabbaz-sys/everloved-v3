@@ -11,7 +11,8 @@
     left: 0;
     z-index: 10;
     padding-right: 80px;
-    /* Match parent padding */
+    pointer-events: none;
+    /* Crucial: Allow clicks to pass through to buttons behind */
 }
 
 /* Ripple Animation Container */
@@ -174,28 +175,27 @@
 }
 
 /* Buttons */
-.startButton {
-    background: #fff;
-    color: #000;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 1.1rem;
-    padding: 0;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow:
-        0 10px 30px rgba(255, 255, 255, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    margin-right: 40px;
-    /* Increased margin to avoid sidebar overlap */
-}
+position: absolute;
+bottom: 40px;
+right: 40px;
+/* moved from margin-right to absolute right */
+padding: 0;
+width: 80px;
+height: 80px;
+display: flex;
+align-items: center;
+justify-content: center;
+border: none;
+border-radius: 50%;
+cursor: pointer;
+background: #fff;
+color: #000;
+pointer-events: auto;
+/* Enable clicks on the button itself */
+box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2),
+0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+z-index: 50;
 
 .startButton:hover {
     transform: translateY(-4px) scale(1.02);
@@ -214,6 +214,8 @@
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
+    pointer-events: auto;
+    /* Enable clicks */
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     margin-top: 1.5rem;
