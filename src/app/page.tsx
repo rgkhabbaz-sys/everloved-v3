@@ -102,7 +102,13 @@ export default function Home() {
     }
 
     utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      // Auto-restart listening for continuous conversation
+      setTimeout(() => {
+        handleStartListening();
+      }, 200);
+    };
 
     window.speechSynthesis.speak(utterance);
   };
