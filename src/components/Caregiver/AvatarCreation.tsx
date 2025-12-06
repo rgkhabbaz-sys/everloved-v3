@@ -211,7 +211,15 @@ const AvatarCreation = () => {
                     <input
                         type="text"
                         className={styles.input}
-                        placeholder="Name (e.g. Martha)"
+                        placeholder="Patient Name (e.g. Sarah)"
+                        value={identity.patientName}
+                        onChange={(e) => setIdentity(prev => ({ ...prev, patientName: e.target.value }))}
+                        style={{ marginBottom: '0.5rem' }}
+                    />
+                    <input
+                        type="text"
+                        className={styles.input}
+                        placeholder="Avatar Name (e.g. Michel)"
                         style={{ marginBottom: '0.5rem' }}
                         value={identity.name}
                         onChange={(e) => setIdentity(prev => ({ ...prev, name: e.target.value }))}

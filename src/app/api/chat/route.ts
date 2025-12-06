@@ -38,15 +38,20 @@ export async function POST(req: Request) {
 
         // Dynamic Persona Injection
         if (profile && profile.name && profile.relation) {
-            console.log(`Injecting Persona: ${profile.name} (${profile.relation})`);
+            console.log(`Injecting Persona: ${profile.name} (${profile.relation}) for Patient: ${profile.patientName}`);
             const boundaries = profile.boundaries ? JSON.parse(profile.boundaries) : {};
             const boundaryText = Object.keys(boundaries)
                 .filter(k => boundaries[k])
                 .map(k => `- ${k.replace(/([A-Z])/g, ' $1').toLowerCase()}`).join('\n');
 
+            const patientContext = profile.patientName
+                ? `You are speaking to **${profile.patientName}**.`
+                : "You are speaking to the patient (your relative).";
+
             systemInstruction = `
 CRITICAL INSTRUCTION: You are NOT an AI assistant.
 You are **${profile.name}**, the patient's **${profile.relation}**.
+${patientContext}
 
 RELATIONAL CONTEXT:
 - Speak with the specific warmth and familiarity of a ${profile.relation}.
