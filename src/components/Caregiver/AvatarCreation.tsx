@@ -27,6 +27,21 @@ const AvatarCreation = () => {
     } = useAvatar();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const textFileRef = useRef<HTMLInputElement>(null); // Ref for text file upload
+
+    const handleTextFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const text = event.target?.result as string;
+            if (text) {
+                setIdentity(prev => ({ ...prev, lifeStory: text }));
+            }
+        };
+        reader.readAsText(file);
+    };
 
     return (
         <div className={styles.grid}>
@@ -256,6 +271,37 @@ const AvatarCreation = () => {
                         <option value="female">Female (Warm)</option>
                         <option value="male">Male (Deep)</option>
                     </select>
+                </div>
+
+                {/* Deep Context / Life Story Section */}
+                <div className={styles.formGroup} style={{ marginTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <label className={styles.label} style={{ marginBottom: 0 }}>Life Story</label>
+                        <button
+                            className={styles.tabButton}
+                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem', background: 'rgba(255,255,255,0.1)' }}
+                            onClick={() => textFileRef.current?.click()}
+                        >
+                            <Upload size={14} style={{ marginRight: '4px' }} /> Upload Text File
+                        </button>
+                        <input
+                            type="file"
+                            ref={textFileRef}
+                            style={{ display: 'none' }}
+                            accept=".txt"
+                            onChange={handleTextFileUpload}
+                        />
+                    </div>
+                    <textarea
+                        className={styles.input}
+                        style={{ minHeight: '200px', resize: 'vertical', lineHeight: '1.6', fontFamily: 'inherit' }}
+                        placeholder="Paste a biography, key memories, childhood stories, or important life events here..."
+                        value={identity.lifeStory}
+                        onChange={(e) => setIdentity(prev => ({ ...prev, lifeStory: e.target.value }))}
+                    />
+                    <p style={{ fontSize: '0.8rem', opacity: 0.6, marginTop: '0.5rem' }}>
+                        This context will be injected into the AI's Brain to personalize every conversation.
+                    </p>
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Boundaries</label>

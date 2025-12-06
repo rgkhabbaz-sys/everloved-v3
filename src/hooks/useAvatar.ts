@@ -6,7 +6,7 @@ export interface AvatarState {
     selectedPhotoIndex: number | null;
     voiceStyle: string;
     tones: { calm: boolean; jovial: boolean; authoritative: boolean };
-    identity: { name: string; relationship: string; gender: 'male' | 'female'; patientName: string };
+    identity: { name: string; relationship: string; gender: 'male' | 'female'; patientName: string; lifeStory: string };
     boundaries: { blockTravel: boolean; blockAlive: boolean; redirectConfusion: boolean };
     isSaving: boolean;
     saveMessage: string;
@@ -21,7 +21,8 @@ export const useAvatar = () => {
         name: '',
         relationship: '',
         gender: 'female',
-        patientName: ''
+        patientName: '',
+        lifeStory: ''
     });
     const [boundaries, setBoundaries] = useState({ blockTravel: true, blockAlive: true, redirectConfusion: true });
     const [isSaving, setIsSaving] = useState(false);
@@ -40,6 +41,27 @@ export const useAvatar = () => {
                 if (index !== -1) {
                     setSelectedPhotoIndex(index);
                 }
+                if (index !== -1) {
+                    setSelectedPhotoIndex(index);
+                }
+            }
+        }
+
+        // Load active profile to populate identity
+        const savedProfile = localStorage.getItem('everloved_active_profile');
+        if (savedProfile) {
+            try {
+                const parsedProfile = JSON.parse(savedProfile);
+                setIdentity(prev => ({
+                    ...prev,
+                    name: parsedProfile.name || '',
+                    relationship: parsedProfile.relation || '',
+                    gender: parsedProfile.gender || 'female',
+                    patientName: parsedProfile.patientName || '',
+                    lifeStory: parsedProfile.lifeStory || ''
+                }));
+            } catch (e) {
+                console.error("Failed to load profile identity", e);
             }
         }
 
@@ -109,6 +131,7 @@ export const useAvatar = () => {
                 relation: identity.relationship,
                 gender: identity.gender,
                 patientName: identity.patientName,
+                lifeStory: identity.lifeStory,
                 boundaries: JSON.stringify(boundaries), // Serialize boundaries for easy prompt injection
             };
 

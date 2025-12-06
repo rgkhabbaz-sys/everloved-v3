@@ -1,12 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './Patient.module.css';
+import { useMicVAD, utils } from "@ricky0123/vad-react";
 
 interface VoiceSessionProps {
     onEndSession: () => void;
     onSpeakingStateChange?: (isSpeaking: boolean) => void;
+    activeProfile: any;
 }
 
 // Type definitions for Web Speech API
@@ -56,44 +58,79 @@ declare global {
     }
 }
 
-const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingStateChange }) => {
-    const [barHeights, setBarHeights] = useState<number[]>([]);
+const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingStateChange, activeProfile }) => {
+    // Session State
+    const [isSessionActive, setIsSessionActive] = useState(false);
+
+    // UI States
     const [status, setStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
     const [transcript, setTranscript] = useState('');
-    const recognitionRef = useRef<SpeechRecognition | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isThinking, setIsThinking] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
 
-    // Waveform animation
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setBarHeights(Array.from({ length: 10 }, () => Math.random() * 30 + 10));
-        }, 100);
-        return () => clearInterval(interval);
-    }, []);
+    const recognitionRef = useRef<SpeechRecognition | null>(null);
 
-    const requestMicrophoneAccess = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            // Permission granted! Stop the stream immediately, we just needed the permission.
-            stream.getTracks().forEach(track => track.stop());
-            setError(null);
-            startSession();
-        } catch (err: any) {
-            console.error('Microphone permission denied:', err);
-            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-                setError('Access Blocked. Click the Lock icon 🔒 in the URL bar and switch Microphone to "Allow".');
-            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-                setError('No microphone found. Please check that your microphone is plugged in and selected in System Settings.');
-            } else {
-                setError(`${err.name}: ${err.message}`);
+    // VAD Hook
+    const vad = useMicVAD({
+        startOnLoad: false,
+        redemptionFrames: 20,
+        onSpeechStart: () => {
+            if (!isSessionActive) return;
+
+            console.log("VAD: Speech Started");
+            // BARGE-IN: Stop any current speech
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
             }
-        }
-    };
+            if (onSpeakingStateChange) onSpeakingStateChange(false);
 
-    const startSession = () => {
+            setStatus('listening');
+
+            // Trigger Speech Recognition
+            try {
+                if (recognitionRef.current && status !== 'processing') {
+                    recognitionRef.current.start();
+                }
+            } catch (e) {
+                // Ignore overlapping start errors
+            }
+        },
+        onSpeechEnd: (audio) => {
+            if (!isSessionActive) return;
+            console.log("VAD: Speech Ended");
+            if (recognitionRef.current) {
+                recognitionRef.current.stop();
+            }
+        },
+        onVADMisfire: () => {
+            console.log("VAD: Misfire (noise)");
+        }
+    });
+
+    // --- SESSION CONTROL ---
+
+    const handleStartSession = useCallback(() => {
+        setIsSessionActive(true);
         setStatus('listening');
+        vad.start();
         setError(null);
-    };
+    }, [vad]);
+
+    const handleEndSession = useCallback(() => {
+        setIsSessionActive(false);
+        setStatus('idle');
+        vad.pause();
+
+        // Stop all media
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current = null;
+        }
+        if (recognitionRef.current) recognitionRef.current.stop();
+    }, [vad]);
+
 
     // Speech Recognition Setup
     useEffect(() => {
@@ -108,41 +145,24 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 setError(null);
             };
 
-            recognition.onaudiostart = () => console.log('Audio capturing started');
-            recognition.onsoundstart = () => console.log('Sound detected');
-            recognition.onspeechstart = () => console.log('Speech detected');
-
             recognition.onresult = (event: SpeechRecognitionEvent) => {
                 const lastResult = event.results[event.results.length - 1];
                 const text = lastResult[0].transcript;
-                console.log('Recognition result:', text, 'isFinal:', lastResult.isFinal);
-
-                // Show interim transcript
                 setTranscript(text);
 
                 if (lastResult.isFinal) {
+                    console.log("Final Result:", text);
                     handleUserSpeech(text);
                 }
             };
 
             recognition.onerror = (event: any) => {
-                console.error('Speech recognition error', event.error);
-                if (event.error === 'not-allowed') {
-                    setError('Access Blocked. Click the Lock icon 🔒 in the URL bar and switch Microphone to "Allow".');
-                    setStatus('idle');
-                } else if (event.error === 'no-speech') {
-                    console.log('No speech detected, restarting...');
-                } else if (event.error === 'audio-capture') {
-                    setError('No microphone found. Please check that your microphone is plugged in and selected in System Settings.');
-                    setStatus('idle');
-                } else {
-                    setError(`Error: ${event.error}`);
+                if (event.error !== 'no-speech' && event.error !== 'aborted') {
+                    console.error('Speech recognition error', event.error);
                 }
-            };
-
-            recognition.onend = () => {
-                console.log('Speech recognition ended');
-                // We handle restarts manually in the flow, or here if it ended unexpectedly
+                if (event.error === 'not-allowed') {
+                    setError('Microphone access blocked.');
+                }
             };
 
             recognitionRef.current = recognition;
@@ -151,40 +171,47 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         }
 
         return () => {
-            if (recognitionRef.current) {
-                recognitionRef.current.stop();
-            }
+            if (recognitionRef.current) recognitionRef.current.stop();
+            if (audioRef.current) audioRef.current.pause();
         };
-    }, []); // Empty dependency array - run once on mount
-
-    // Effect to handle status-based recognition control
-    useEffect(() => {
-        if (!recognitionRef.current) return;
-
-        if (status === 'listening' && !error) {
-            try {
-                recognitionRef.current.start();
-            } catch (e) {
-                // Already started or other non-fatal error
-            }
-        } else {
-            recognitionRef.current.stop();
-        }
-    }, [status, error]);
+    }, []);
 
     const handleUserSpeech = async (text: string) => {
+        if (!text.trim() || !isSessionActive) return;
+
         setStatus('processing');
+        setIsThinking(true);
         if (onSpeakingStateChange) onSpeakingStateChange(false);
 
-        // Save user message to transcript
         saveToTranscript('patient', text);
 
-        // Simulate thinking delay
-        setTimeout(() => {
-            const response = generateResponse(text);
-            saveToTranscript('avatar', response);
-            speakResponse(response);
-        }, 1000);
+        try {
+            // Call Gemini API
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: text,
+                    profile: activeProfile // Pass the profile
+                }),
+            });
+
+            const data = await response.json();
+
+            if (isSessionActive && data.text) {
+                saveToTranscript('avatar', data.text);
+                setIsThinking(false);
+                await speakResponse(data.text);
+            } else {
+                setIsThinking(false);
+                setStatus('listening');
+            }
+
+        } catch (error) {
+            console.error("API Error:", error);
+            setIsThinking(false);
+            setStatus('listening');
+        }
     };
 
     const saveToTranscript = (sender: 'patient' | 'avatar', text: string) => {
@@ -193,73 +220,77 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         const transcript = existing ? JSON.parse(existing) : [];
         const updated = [...transcript, newMessage];
         localStorage.setItem('everloved_transcript', JSON.stringify(updated));
-        // Dispatch event for other tabs/components to pick up
         window.dispatchEvent(new Event('storage'));
     };
 
-    const generateResponse = (text: string): string => {
-        const lowerText = text.toLowerCase();
+    const speakResponse = async (text: string) => {
+        if (!isSessionActive) return;
 
-        // Load boundaries
-        const savedBoundaries = localStorage.getItem('everloved_boundaries');
-        const boundaries = savedBoundaries ? JSON.parse(savedBoundaries) : {};
+        // Smart Pausing: Stop listening while WE speak
+        vad.pause();
 
-        // Check Boundaries
-        if (boundaries.blockTravel && (lowerText.includes('go home') || lowerText.includes('travel') || lowerText.includes('ticket') || lowerText.includes('airport'))) {
-            return "We are safe right here. Look at the beautiful view. Why don't we just relax for a while?";
-        }
-
-        if (boundaries.blockAlive && (lowerText.includes('alive') || lowerText.includes('dead') || lowerText.includes('died'))) {
-            return "I am right here with you. That is what matters most.";
-        }
-
-        if (boundaries.redirectConfusion && (lowerText.includes('who are you') || lowerText.includes('where am i'))) {
-            return "You are in a safe place, and I am here to keep you company. You are loved.";
-        }
-
-        // Standard Responses
-        if (lowerText.includes('hello') || lowerText.includes('hi')) return "Hello there. It's so good to see you.";
-        if (lowerText.includes('how are you')) return "I'm doing quite well, thank you. Just enjoying the view.";
-        if (lowerText.includes('weather')) return "It looks like a beautiful day outside.";
-        if (lowerText.includes('remember')) return "I have so many wonderful memories. Which one are you thinking of?";
-        if (lowerText.includes('love you')) return "I love you too, very much.";
-
-        return "That's interesting. Tell me more about that.";
-    };
-
-    const speakResponse = (text: string) => {
         setStatus('speaking');
         if (onSpeakingStateChange) onSpeakingStateChange(true);
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
+        try {
+            const gender = activeProfile?.gender || 'female';
+            const response = await fetch('/api/speak', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, gender }),
+            });
 
-        // Try to select a female voice if available
-        const voices = window.speechSynthesis.getVoices();
-        const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Google US English'));
-        if (femaleVoice) utterance.voice = femaleVoice;
+            if (!response.ok) throw new Error("TTS Failed");
 
-        utterance.onend = () => {
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audioRef.current = audio;
+
+            audio.onended = () => {
+                if (isSessionActive) {
+                    setStatus('listening');
+                    if (onSpeakingStateChange) onSpeakingStateChange(false);
+                    vad.start(); // Smart Resume
+                }
+            };
+
+            // Handle if audio fails to play
+            audio.onerror = () => {
+                setStatus('listening');
+                if (onSpeakingStateChange) onSpeakingStateChange(false);
+                vad.start();
+            };
+
+            await audio.play();
+
+        } catch (err) {
+            console.error("TTS Error:", err);
             setStatus('listening');
             if (onSpeakingStateChange) onSpeakingStateChange(false);
-        };
-
-        window.speechSynthesis.speak(utterance);
+            vad.start();
+        }
     };
 
     return (
         <div className={styles.voiceSessionContainer}>
-            {status === 'idle' && !error ? (
-                <button
-                    onClick={startSession}
-                    className={styles.startButton}
-                >
-                    Start Conversation
-                </button>
-            ) : (
+            {/* IDLE STATE: Start Button */}
+            {!isSessionActive && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', height: '100%', zIndex: 20 }}>
+                    <button
+                        onClick={handleStartSession}
+                        className={styles.startButton}
+                    >
+                        Start Conversation
+                    </button>
+                    {error && <span className={styles.errorMessage} style={{ marginTop: '1rem' }}>{error}</span>}
+                </div>
+            )}
+
+            {/* ACTIVE SESSION UI */}
+            {isSessionActive && (
                 <>
-                    {/* Soft Ripple Animation for Active State */}
+                    {/* Ripple Animations */}
                     <div className={styles.rippleContainer}>
                         {status === 'speaking' && (
                             <motion.div
@@ -268,69 +299,67 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                             />
                         )}
-                        {status === 'processing' && (
+                        {isThinking && (
                             <motion.div
                                 className={styles.rippleProcessing}
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                             />
                         )}
-                        {status === 'listening' && (
+                        {vad.userSpeaking && !isThinking && (
                             <motion.div
-                                className={styles.rippleListening}
-                                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }}
-                                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                                className={styles.rippleListening} // Red/Pulse for User Speaking
+                                style={{ borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                                animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0.2, 0.6] }}
+                                transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                        )}
+                        {!vad.userSpeaking && !isThinking && status === 'listening' && (
+                            <motion.div
+                                className={styles.rippleListening} // Green/Calm
+                                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.1, 0.3] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                             />
                         )}
                     </div>
 
+                    {/* Status Text */}
                     <p className={styles.statusText}>
-                        {error ? (
-                            <div className={styles.errorContainer}>
-                                <span className={styles.errorMessage}>{error}</span>
-                                <button
-                                    onClick={requestMicrophoneAccess}
-                                    className={styles.retryButton}
-                                >
-                                    Force Enable Microphone
-                                </button>
-                            </div>
+                        {vad.loading ? (
+                            <span className={styles.statusLabel}>Loading...</span>
                         ) : (
                             <span className={styles.statusLabel}>
-                                {status === 'listening' && "Listening..."}
-                                {status === 'processing' && "Thinking..."}
-                                {status === 'speaking' && "Speaking..."}
+                                {vad.userSpeaking ? "I'm listening..." :
+                                    isThinking ? "Thinking..." :
+                                        status === 'speaking' ? "Speaking..." :
+                                            "Listening..."}
                             </span>
                         )}
                     </p>
+
+                    {/* Transcript Feedback */}
                     {!error && transcript && (
                         <div className={styles.transcriptContainer}>
                             <p className={styles.transcriptText}>"{transcript}"</p>
                         </div>
                     )}
 
-                    <div className={styles.inputContainer}>
-                        <input
-                            type="text"
-                            className={styles.textInput}
-                            placeholder="Type a message..."
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    const target = e.target as HTMLInputElement;
-                                    if (target.value.trim()) {
-                                        handleUserSpeech(target.value);
-                                        target.value = '';
-                                    }
-                                }
+                    {/* Controls */}
+                    <div style={{ marginTop: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <button
+                            className={styles.endButton}
+                            onClick={handleEndSession}
+                            style={{
+                                borderColor: 'rgba(239, 68, 68, 0.5)',
+                                color: '#fca5a5',
+                                background: 'rgba(239, 68, 68, 0.1)'
                             }}
-                        />
+                        >
+                            End Conversation
+                        </button>
                     </div>
                 </>
             )}
-
-            <button className={styles.endButton} onClick={onEndSession}>
-                End Session
-            </button>
         </div>
     );
 };
