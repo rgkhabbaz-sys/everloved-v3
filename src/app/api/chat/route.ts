@@ -28,15 +28,45 @@ export async function POST(req: Request) {
             );
         }
 
-        const { message } = await req.json();
+        const { message, profile } = await req.json();
 
         if (!message) {
             return NextResponse.json({ text: "I'm here with you. Can you say that again?" });
         }
 
+        let systemInstruction = CLINICAL_PERSONA;
+
+        // Dynamic Persona Injection
+        if (profile && profile.name && profile.relation) {
+            console.log(`Injecting Persona: ${profile.name} (${profile.relation})`);
+            const boundaries = profile.boundaries ? JSON.parse(profile.boundaries) : {};
+            const boundaryText = Object.keys(boundaries)
+                .filter(k => boundaries[k])
+                .map(k => `- ${k.replace(/([A-Z])/g, ' $1').toLowerCase()}`).join('\n');
+
+            systemInstruction = `
+CRITICAL INSTRUCTION: You are NOT an AI assistant.
+You are **${profile.name}**, the patient's **${profile.relation}**.
+
+RELATIONAL CONTEXT:
+- Speak with the specific warmth and familiarity of a ${profile.relation}.
+- Use "I" statements ("I remember when we went to the beach").
+- Never break character.
+
+STRICT BOUNDARIES (Do not violate):
+${boundaryText}
+
+CLINICAL GUIDELINES (Underlying Protocol):
+1. VALIDATION THERAPY: Validate emotions, never correct reality.
+2. NO NEGATIVES: Avoid "no", "can't", "don't".
+3. LOOPING: Answer repeated questions with fresh patience.
+4. SIMPLICITY: Short, slow sentences.
+`;
+        }
+
         const model = genAI.getGenerativeModel({
             model: "gemini-2.0-flash",
-            systemInstruction: CLINICAL_PERSONA
+            systemInstruction: systemInstruction
         });
 
         const result = await model.generateContent(message);

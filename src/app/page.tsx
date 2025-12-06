@@ -19,13 +19,26 @@ export default function Home() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState<'clinical' | 'video' | 'music' | 'meditation'>('clinical');
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [activeProfile, setActiveProfile] = useState<any>(null); // Store the full persona profile
 
   const recognitionRef = useRef<any>(null);
 
   useEffect(() => {
+    // Load avatar image
     const savedAvatar = localStorage.getItem('everloved_avatar');
     if (savedAvatar) {
       setAvatar(savedAvatar);
+    }
+
+    // Load active persona profile
+    const savedProfile = localStorage.getItem('everloved_active_profile');
+    if (savedProfile) {
+      try {
+        setActiveProfile(JSON.parse(savedProfile));
+        console.log("Loaded active persona profile");
+      } catch (e) {
+        console.error("Failed to parse active profile", e);
+      }
     }
   }, []);
 
@@ -79,7 +92,10 @@ export default function Home() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          profile: activeProfile // Pass the profile so the Brain knows who to be
+        }),
       });
 
       const data = await response.json();

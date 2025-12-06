@@ -83,18 +83,30 @@ export const useAvatar = () => {
         console.log('Saving configuration...', { selectedPhotoIndex, photosLength: photos.length });
 
         try {
+            let activeImage = '';
             if (selectedPhotoIndex === -1) {
                 console.log('Clearing avatar from localStorage (No Photo selected)');
                 localStorage.removeItem('everloved_avatar');
             } else if (selectedPhotoIndex !== null && photos[selectedPhotoIndex]) {
-                console.log('Saving avatar to localStorage:', photos[selectedPhotoIndex].substring(0, 50) + '...');
-                localStorage.setItem('everloved_avatar', photos[selectedPhotoIndex]);
+                activeImage = photos[selectedPhotoIndex];
+                console.log('Saving avatar to localStorage:', activeImage.substring(0, 50) + '...');
+                localStorage.setItem('everloved_avatar', activeImage);
             } else {
                 console.warn('No avatar selected or photo not found');
             }
 
             localStorage.setItem('everloved_boundaries', JSON.stringify(boundaries));
-            console.log('Saved boundaries:', boundaries);
+
+            // Phase 1: Create Single Source of Truth Profile
+            const profile = {
+                imageUrl: activeImage,
+                name: identity.name,
+                relation: identity.relationship,
+                boundaries: JSON.stringify(boundaries), // Serialize boundaries for easy prompt injection
+            };
+
+            localStorage.setItem('everloved_active_profile', JSON.stringify(profile));
+            console.log('Saved active profile:', profile);
 
             setTimeout(() => {
                 setIsSaving(false);
@@ -107,7 +119,7 @@ export const useAvatar = () => {
             setSaveMessage('Error saving! Image might be too large.');
             setTimeout(() => setSaveMessage(''), 3000);
         }
-    }, [selectedPhotoIndex, photos, boundaries]);
+    }, [selectedPhotoIndex, photos, boundaries, identity]);
 
     const toggleTone = (tone: keyof typeof tones) => {
         setTones(prev => ({ ...prev, [tone]: !prev[tone] }));
