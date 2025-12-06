@@ -175,27 +175,30 @@
 }
 
 /* Buttons */
-position: absolute;
-bottom: 40px;
-right: 40px;
-/* moved from margin-right to absolute right */
-padding: 0;
-width: 80px;
-height: 80px;
-display: flex;
-align-items: center;
-justify-content: center;
-border: none;
-border-radius: 50%;
-cursor: pointer;
-background: #fff;
-color: #000;
-pointer-events: auto;
-/* Enable clicks on the button itself */
-box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2),
-0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-z-index: 50;
+.startButton {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    /* moved from margin-right to absolute right */
+    padding: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #fff;
+    color: #000;
+    pointer-events: auto;
+    /* Enable clicks on the button itself */
+    box-shadow:
+        0 10px 30px rgba(255, 255, 255, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 50;
+}
 
 .startButton:hover {
     transform: translateY(-4px) scale(1.02);
