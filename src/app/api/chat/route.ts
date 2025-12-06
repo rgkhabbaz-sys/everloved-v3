@@ -45,10 +45,11 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ text });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error('Gemini API Error:', error);
+        const errorMessage = error?.message || 'Unknown error';
         return NextResponse.json(
-            { text: "I am having a little trouble hearing you, but I am right here. Shall we just sit together for a moment?" },
+            { text: `I am having trouble. The error is: ${errorMessage}` },
             { status: 500 }
         );
     }
