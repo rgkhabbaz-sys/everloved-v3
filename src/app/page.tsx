@@ -9,11 +9,9 @@ import styles from './page.module.css';
 import { motion } from 'framer-motion';
 
 // Add type definition for SpeechRecognition if not available in TS
-declare global {
-  interface Window {
-    webkitSpeechRecognition: any;
-  }
-}
+// Declaring this as any to avoid conflicts with lib.dom.d.ts which might define it differently
+// We will just cast window to any locally where needed
+
 
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
