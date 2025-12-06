@@ -19,6 +19,15 @@ CORE CLINICAL PROTOCOLS (Do not break these):
 
 export async function POST(req: Request) {
     try {
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) {
+            console.error('Gemini API Key is missing in environment variables');
+            return NextResponse.json(
+                { text: "I'm having trouble accessing my memories (API Key missing). Please check settings." },
+                { status: 503 }
+            );
+        }
+
         const { message } = await req.json();
 
         if (!message) {
