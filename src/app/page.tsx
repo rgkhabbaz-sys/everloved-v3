@@ -37,14 +37,16 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.backgroundWrapper}>
         <motion.div
+          initial={{ scale: 1.0, x: 0 }}
           animate={{
-            scale: isSpeaking ? 1.05 : 1.3, // Breathing effect when speaking
+            scale: 1.15,
+            x: -20,
           }}
           transition={{
-            duration: isSpeaking ? 4 : 35, // Faster cycle when speaking
+            duration: 25,
             repeat: Infinity,
-            repeatType: 'reverse',
-            ease: 'easeInOut',
+            repeatType: "mirror",
+            ease: "easeInOut",
           }}
           style={{ width: '100%', height: '100%', position: 'absolute' }}
         >
@@ -93,10 +95,20 @@ export default function Home() {
         <motion.div
           className={styles.avatarBox}
           initial={{ opacity: 0, scale: 0.9, x: "-50%", y: "-50%" }}
-          animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+          animate={{
+            opacity: 1,
+            x: "-50%",
+            y: "-50%",
+            scale: 1.02 // Target scale for breathing
+          }}
           transition={{
-            duration: 2.0,
-            ease: "easeOut"
+            opacity: { duration: 2.0, ease: "easeOut" },
+            scale: {
+              duration: 6,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut"
+            }
           }}
         >
           <img
