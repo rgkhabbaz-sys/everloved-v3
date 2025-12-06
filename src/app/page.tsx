@@ -88,6 +88,39 @@ export default function Home() {
       setIsProcessing(false);
     }
   };
+  const speakResponse = async (text: string) => {
+    try {
+      // Fetch audio from our server-side ElevenLabs endpoint
+      const response = await fetch('/api/speak', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (!response.ok) throw new Error('TTS request failed');
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+
+      audio.onplay = () => setIsSpeaking(true);
+      audio.onended = () => {
+        setIsSpeaking(false);
+        // Auto-restart listening for continuous conversation
+        setTimeout(() => {
+          handleStartListening();
+        }, 200);
+      };
+
+      audio.play();
+    } catch (error) {
+      console.error('Error playing TTS:', error);
+      setIsSpeaking(false);
+      // Fallback or just restart listening?
+      setTimeout(handleStartListening, 200);
+    }
+  };
+
 
 
   const toggleListening = () => {
