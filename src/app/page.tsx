@@ -78,7 +78,7 @@ export default function Home() {
             scale: 1,
           }}
           transition={{
-            duration: 3.5,
+            duration: 2.5,
             ease: "easeInOut",
             delay: 0.5
           }}
