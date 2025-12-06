@@ -99,14 +99,13 @@ export default function Home() {
             opacity: 1,
             x: "-50%",
             y: "-50%",
-            scale: 1.02 // Target scale for breathing
+            scale: [1, 1.05, 1] // Keyframe array for explicit loop control
           }}
           transition={{
             opacity: { duration: 2.0, ease: "easeOut" },
             scale: {
               duration: 6,
               repeat: Infinity,
-              repeatType: "mirror",
               ease: "easeInOut"
             }
           }}
