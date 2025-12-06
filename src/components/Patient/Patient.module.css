@@ -177,7 +177,8 @@
 /* Buttons */
 .startButton {
     position: absolute;
-    bottom: 40px;
+    bottom: 150px;
+    /* Moved up by ~1 inch to clear bottom buttons */
     right: 40px;
     /* moved from margin-right to absolute right */
     padding: 0;
