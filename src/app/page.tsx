@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [mode, setMode] = useState<'clinical' | 'video' | 'music' | 'meditation'>('clinical');
   const [avatar, setAvatar] = useState<string | null>(null);
 
