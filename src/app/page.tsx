@@ -58,7 +58,34 @@ export default function Home() {
         <div className={styles.overlay} />
       </div>
 
-      {/* Logo and Nav are now handled by global NavBar component */}
+      {/* Logo and Nav are now handled by global NavBar component */
+        /* ANIMATED LOGO for Landing Page */
+        <motion.div
+          className={styles.logo}
+          initial={{
+            top: "50%",
+            left: "50%",
+            x: "-50%",
+            y: "-50%",
+            scale: 1.5,
+          }}
+          animate={{
+            top: "auto",
+            bottom: "40px",
+            left: "40px",
+            x: "0%",
+            y: "0%",
+            scale: 1,
+          }}
+          transition={{
+            duration: 3.5,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+          style={{ position: 'absolute', zIndex: 50 }}
+        >
+          everLoved
+        </motion.div>}
 
       {/* Floating Avatar Box */}
       {avatar && (
