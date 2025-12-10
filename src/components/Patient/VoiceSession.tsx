@@ -66,12 +66,17 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
     // UI States
     const [status, setStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
     const [transcript, setTranscript] = useState('');
-    const [aiResponse, setAiResponse] = useState(''); // NEW: For debugging
+    const [aiResponse, setAiResponse] = useState('');
+    const [debugLogs, setDebugLogs] = useState<string[]>([]); // Flight Recorder
     const [error, setError] = useState<string | null>(null);
     const [isThinking, setIsThinking] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     const recognitionRef = useRef<SpeechRecognition | null>(null);
+
+    const addLog = (msg: string) => {
+        setDebugLogs(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${msg}`]);
+    };
 
     // VAD Hook
     const vad = useMicVAD({
@@ -79,7 +84,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         redemptionMs: 500,
         onSpeechStart: () => {
             if (!isSessionActive) return;
-
+            addLog("VAD: Speech Started");
             console.log("VAD: Speech Started");
             // BARGE-IN: Stop any current speech
             if (audioRef.current) {
@@ -94,6 +99,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             try {
                 if (recognitionRef.current && status !== 'processing') {
                     recognitionRef.current.start();
+                    addLog("STT: Started listening");
                 }
             } catch (e) {
                 // Ignore overlapping start errors
@@ -101,9 +107,11 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         },
         onSpeechEnd: (audio) => {
             if (!isSessionActive) return;
+            addLog("VAD: Speech Ended");
             console.log("VAD: Speech Ended");
             if (recognitionRef.current) {
                 recognitionRef.current.stop();
+                addLog("STT: Stopped listening");
             }
         },
         onVADMisfire: () => {
@@ -154,11 +162,13 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
                 if (lastResult.isFinal) {
                     console.log("Final Result:", text);
+                    addLog(`STT Final: "${text}"`);
                     handleUserSpeech(text);
                 }
             };
 
             recognition.onerror = (event: any) => {
+                addLog(`STT Error: ${event.error}`);
                 if (event.error !== 'no-speech' && event.error !== 'aborted') {
                     console.error('Speech recognition error', event.error);
                 }
@@ -186,6 +196,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         if (onSpeakingStateChange) onSpeakingStateChange(false);
 
         saveToTranscript('patient', text);
+        addLog("API: Sending to Gemini...");
 
         try {
             // Call Gemini API
@@ -202,7 +213,8 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
             if (isSessionActive && data.text) {
                 saveToTranscript('avatar', data.text);
-                setAiResponse(data.text); // Display AI Text
+                setAiResponse(data.text);
+                addLog("API: Success. Text received.");
                 setIsThinking(false);
                 await speakResponse(data.text);
             } else {
@@ -210,8 +222,9 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 setStatus('listening');
             }
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("API Error:", error);
+            addLog(`API Fail: ${error.message || 'Unknown'}`);
             setIsThinking(false);
             setStatus('listening');
         }
@@ -383,6 +396,13 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                             {aiResponse && <p className={styles.transcriptText} style={{ color: '#60a5fa', marginTop: '0.5rem' }}>AI: "{aiResponse}"</p>}
                         </div>
                     )}
+
+                    {/* DEBUG LOGS */}
+                    <div style={{ marginTop: '1rem', width: '100%', fontSize: '0.7rem', color: '#888', fontFamily: 'monospace', background: 'rgba(0,0,0,0.2)', padding: '0.5rem', borderRadius: '4px' }}>
+                        {debugLogs.map((log, i) => (
+                            <div key={i}>{log}</div>
+                        ))}
+                    </div>
 
                     {/* Controls */}
                     <div style={{ marginTop: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
