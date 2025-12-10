@@ -83,7 +83,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         startOnLoad: false,
         redemptionMs: 500,
         workletURL: "/vad.worklet.bundle.min.js",
-        modelURL: "/silero_vad.onnx",
+        modelURL: "/silero_vad_legacy.onnx",
         onnxWASMPaths: {
             'ort-wasm-simd-threaded.wasm': '/ort-wasm-simd-threaded.wasm',
             'ort-wasm-simd.wasm': '/ort-wasm-simd.wasm',
