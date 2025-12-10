@@ -113,7 +113,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                 // Ignore overlapping start errors
             }
         },
-        onSpeechEnd: (audio) => {
+        onSpeechEnd: (audio: Float32Array) => {
             if (!isSessionActive) return;
             addLog("VAD: Speech Ended");
             console.log("VAD: Speech Ended");
