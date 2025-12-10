@@ -66,6 +66,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
     // UI States
     const [status, setStatus] = useState<'idle' | 'listening' | 'processing' | 'speaking'>('idle');
     const [transcript, setTranscript] = useState('');
+    const [aiResponse, setAiResponse] = useState(''); // NEW: For debugging
     const [error, setError] = useState<string | null>(null);
     const [isThinking, setIsThinking] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -201,6 +202,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
             if (isSessionActive && data.text) {
                 saveToTranscript('avatar', data.text);
+                setAiResponse(data.text); // Display AI Text
                 setIsThinking(false);
                 await speakResponse(data.text);
             } else {
@@ -375,9 +377,10 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                     </p>
 
                     {/* Transcript Feedback */}
-                    {!error && transcript && (
+                    {!error && (
                         <div className={styles.transcriptContainer}>
-                            <p className={styles.transcriptText}>"{transcript}"</p>
+                            {transcript && <p className={styles.transcriptText}>You: "{transcript}"</p>}
+                            {aiResponse && <p className={styles.transcriptText} style={{ color: '#60a5fa', marginTop: '0.5rem' }}>AI: "{aiResponse}"</p>}
                         </div>
                     )}
 
