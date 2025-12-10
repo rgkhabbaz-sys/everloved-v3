@@ -88,7 +88,11 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
             'ort-wasm-simd-threaded.wasm': '/ort-wasm-simd-threaded.wasm',
             'ort-wasm-simd.wasm': '/ort-wasm-simd.wasm',
             'ort-wasm.wasm': '/ort-wasm.wasm',
-            'ort-wasm-threaded.wasm': '/ort-wasm-threaded.wasm'
+            'ort-wasm-threaded.wasm': '/ort-wasm-threaded.wasm',
+            'ort-wasm-simd-threaded.mjs': '/ort-wasm-simd-threaded.mjs',
+            'ort-wasm-simd.mjs': '/ort-wasm-simd-threaded.mjs',
+            'ort-wasm.mjs': '/ort-wasm-simd-threaded.mjs',
+            'ort-wasm-threaded.mjs': '/ort-wasm-simd-threaded.mjs'
         },
         onSpeechStart: () => {
             if (!isSessionActive) return;
