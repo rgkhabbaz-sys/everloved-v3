@@ -258,111 +258,147 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
             // Handle if audio fails to play
             audio.onerror = () => {
-                setStatus('listening');
-                if (onSpeakingStateChange) onSpeakingStateChange(false);
-                vad.start();
+                console.warn("Audio playback failed, attempting fallback...");
+                playFallbackTTS(text);
             };
 
             await audio.play();
 
         } catch (err) {
             console.error("TTS Error:", err);
-            setStatus('listening');
-            if (onSpeakingStateChange) onSpeakingStateChange(false);
-            vad.start();
+            console.log("Attempting Fallback TTS...");
+            playFallbackTTS(text);
         }
     };
 
-    return (
-        <div className={styles.voiceSessionContainer}>
-            {/* IDLE STATE: Start Button */}
-            {!isSessionActive && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', height: '100%', zIndex: 20 }}>
-                    <button
-                        onClick={handleStartSession}
-                        className={styles.startButton}
-                    >
-                        <Mic size={32} />
-                    </button>
-                    {error && <span className={styles.errorMessage} style={{ marginTop: '1rem' }}>{error}</span>}
-                </div>
-            )}
+    const playFallbackTTS = (text: string) => {
+        if (!isSessionActive) return;
 
-            {/* ACTIVE SESSION UI */}
-            {isSessionActive && (
-                <>
-                    {/* Ripple Animations */}
-                    <div className={styles.rippleContainer}>
-                        {status === 'speaking' && (
-                            <motion.div
-                                className={styles.rippleSpeaking}
-                                animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                            />
-                        )}
-                        {isThinking && (
-                            <motion.div
-                                className={styles.rippleProcessing}
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                            />
-                        )}
-                        {vad.userSpeaking && !isThinking && (
-                            <motion.div
-                                className={styles.rippleListening} // Red/Pulse for User Speaking
-                                style={{ borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
-                                animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0.2, 0.6] }}
-                                transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
-                            />
-                        )}
-                        {!vad.userSpeaking && !isThinking && status === 'listening' && (
-                            <motion.div
-                                className={styles.rippleListening} // Green/Calm
-                                animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.1, 0.3] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                            />
-                        )}
-                    </div>
+        // Ensure we stop any existing speech first
+        window.speechSynthesis.cancel();
 
-                    {/* Status Text */}
-                    <p className={styles.statusText}>
-                        {vad.loading ? (
-                            <span className={styles.statusLabel}>Loading...</span>
-                        ) : (
-                            <span className={styles.statusLabel}>
-                                {vad.userSpeaking ? "I'm listening..." :
-                                    isThinking ? "Thinking..." :
-                                        status === 'speaking' ? "Speaking..." :
-                                            "Listening..."}
-                            </span>
-                        )}
-                    </p>
+        const utterance = new SpeechSynthesisUtterance(text);
 
-                    {/* Transcript Feedback */}
-                    {!error && transcript && (
-                        <div className={styles.transcriptContainer}>
-                            <p className={styles.transcriptText}>"{transcript}"</p>
-                        </div>
+        // Try to find a decent voice
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
+        if (preferredVoice) utterance.voice = preferredVoice;
+
+        utterance.onstart = () => {
+            setStatus('speaking');
+            if (onSpeakingStateChange) onSpeakingStateChange(true);
+        };
+
+        utterance.onend = () => {
+            if (isSessionActive) {
+                setStatus('listening');
+                if (onSpeakingStateChange) onSpeakingStateChange(false);
+                vad.start();
+            }
+        };
+
+        utterance.onerror = (e) => {
+            console.error("Fallback TTS Error:", e);
+            // Final fail-safe: return to listening
+            setStatus('listening');
+            if (onSpeakingStateChange) onSpeakingStateChange(false);
+            vad.start();
+        };
+
+        window.speechSynthesis.speak(utterance);
+    };
+};
+
+return (
+    <div className={styles.voiceSessionContainer}>
+        {/* IDLE STATE: Start Button */}
+        {!isSessionActive && (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', height: '100%', zIndex: 20 }}>
+                <button
+                    onClick={handleStartSession}
+                    className={styles.startButton}
+                >
+                    <Mic size={32} />
+                </button>
+                {error && <span className={styles.errorMessage} style={{ marginTop: '1rem' }}>{error}</span>}
+            </div>
+        )}
+
+        {/* ACTIVE SESSION UI */}
+        {isSessionActive && (
+            <>
+                {/* Ripple Animations */}
+                <div className={styles.rippleContainer}>
+                    {status === 'speaking' && (
+                        <motion.div
+                            className={styles.rippleSpeaking}
+                            animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        />
                     )}
+                    {isThinking && (
+                        <motion.div
+                            className={styles.rippleProcessing}
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                        />
+                    )}
+                    {vad.userSpeaking && !isThinking && (
+                        <motion.div
+                            className={styles.rippleListening} // Red/Pulse for User Speaking
+                            style={{ borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.6, 0.2, 0.6] }}
+                            transition={{ duration: 0.8, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    )}
+                    {!vad.userSpeaking && !isThinking && status === 'listening' && (
+                        <motion.div
+                            className={styles.rippleListening} // Green/Calm
+                            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.1, 0.3] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                        />
+                    )}
+                </div>
 
-                    {/* Controls */}
-                    <div style={{ marginTop: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                        <button
-                            className={styles.endButton}
-                            onClick={handleEndSession}
-                            style={{
-                                borderColor: 'rgba(239, 68, 68, 0.5)',
-                                color: '#fca5a5',
-                                background: 'rgba(239, 68, 68, 0.1)'
-                            }}
-                        >
-                            End Conversation
-                        </button>
+                {/* Status Text */}
+                <p className={styles.statusText}>
+                    {vad.loading ? (
+                        <span className={styles.statusLabel}>Loading...</span>
+                    ) : (
+                        <span className={styles.statusLabel}>
+                            {vad.userSpeaking ? "I'm listening..." :
+                                isThinking ? "Thinking..." :
+                                    status === 'speaking' ? "Speaking..." :
+                                        "Listening..."}
+                        </span>
+                    )}
+                </p>
+
+                {/* Transcript Feedback */}
+                {!error && transcript && (
+                    <div className={styles.transcriptContainer}>
+                        <p className={styles.transcriptText}>"{transcript}"</p>
                     </div>
-                </>
-            )}
-        </div>
-    );
+                )}
+
+                {/* Controls */}
+                <div style={{ marginTop: 'auto', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <button
+                        className={styles.endButton}
+                        onClick={handleEndSession}
+                        style={{
+                            borderColor: 'rgba(239, 68, 68, 0.5)',
+                            color: '#fca5a5',
+                            background: 'rgba(239, 68, 68, 0.1)'
+                        }}
+                    >
+                        End Conversation
+                    </button>
+                </div>
+            </>
+        )}
+    </div>
+);
 };
 
 export default VoiceSession;
