@@ -125,7 +125,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         onVADMisfire: () => {
             console.log("VAD: Misfire (noise)");
         }
-    });
+    } as any);
 
     // --- SESSION CONTROL ---
 
