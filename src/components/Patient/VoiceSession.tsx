@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import styles from './Patient.module.css';
 import { useMicVAD, utils } from "@ricky0123/vad-react";
-import { Mic } from 'lucide-react';
+import { Mic, AlertCircle } from 'lucide-react';
 
 interface VoiceSessionProps {
     onEndSession: () => void;
@@ -127,13 +127,30 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         }
     } as any);
 
+    // Watch for VAD errors if exposed
+    useEffect(() => {
+        if (vad.errored) {
+            console.error("VAD Error:", vad.errored);
+            setError("VAD failed to start. Please check microphone permissions.");
+            addLog("VAD Error: Initialization failed");
+        }
+    }, [vad.errored]);
+
     // --- SESSION CONTROL ---
 
-    const handleStartSession = useCallback(() => {
+    const handleStartSession = useCallback(async () => {
         setIsSessionActive(true);
         setStatus('listening');
-        vad.start();
         setError(null);
+        try {
+            await vad.start();
+        } catch (e: any) {
+            console.error("VAD Start Error:", e);
+            setError(`Microphone access denied or VAD error: ${e.message}`);
+            addLog(`VAD Start Fail: ${e.message}`);
+            setIsSessionActive(false);
+            setStatus('idle');
+        }
     }, [vad]);
 
     const handleEndSession = useCallback(() => {
@@ -153,39 +170,45 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
     // Speech Recognition Setup
     useEffect(() => {
         if ('webkitSpeechRecognition' in window) {
-            const recognition = new window.webkitSpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.lang = 'en-US';
+            try {
+                const recognition = new window.webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
 
-            recognition.onstart = () => {
-                console.log('Speech recognition started');
-                setError(null);
-            };
+                recognition.onstart = () => {
+                    console.log('Speech recognition started');
+                    setError(null);
+                };
 
-            recognition.onresult = (event: SpeechRecognitionEvent) => {
-                const lastResult = event.results[event.results.length - 1];
-                const text = lastResult[0].transcript;
-                setTranscript(text);
+                recognition.onresult = (event: SpeechRecognitionEvent) => {
+                    const lastResult = event.results[event.results.length - 1];
+                    const text = lastResult[0].transcript;
+                    setTranscript(text);
 
-                if (lastResult.isFinal) {
-                    console.log("Final Result:", text);
-                    addLog(`STT Final: "${text}"`);
-                    handleUserSpeech(text);
-                }
-            };
+                    if (lastResult.isFinal) {
+                        console.log("Final Result:", text);
+                        addLog(`STT Final: "${text}"`);
+                        handleUserSpeech(text);
+                    }
+                };
 
-            recognition.onerror = (event: any) => {
-                addLog(`STT Error: ${event.error}`);
-                if (event.error !== 'no-speech' && event.error !== 'aborted') {
-                    console.error('Speech recognition error', event.error);
-                }
-                if (event.error === 'not-allowed') {
-                    setError('Microphone access blocked.');
-                }
-            };
+                recognition.onerror = (event: any) => {
+                    addLog(`STT Error: ${event.error}`);
+                    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+                        console.error('Speech recognition error', event.error);
+                    }
+                    if (event.error === 'not-allowed') {
+                        setError('Microphone access blocked.');
+                    }
+                };
 
-            recognitionRef.current = recognition;
+                recognitionRef.current = recognition;
+            } catch (e: any) {
+                console.error("Speech Recognition Init Error:", e);
+                setError(`Failed to initialize speech recognition: ${e.message}`);
+                addLog(`STT Init Fail: ${e.message}`);
+            }
         } else {
             setError("Browser doesn't support speech recognition.");
         }
@@ -334,6 +357,41 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
 
     return (
         <div className={styles.voiceSessionContainer}>
+            {/* Error Alert */}
+            {error && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={styles.errorAlert}
+                    style={{
+                        position: 'absolute',
+                        top: '1rem',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                        color: 'white',
+                        padding: '0.75rem 1.5rem',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        zIndex: 50,
+                        maxWidth: '90%',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                    }}
+                >
+                    <AlertCircle size={20} />
+                    <span>{error}</span>
+                    <button
+                        onClick={() => setError(null)}
+                        style={{ marginLeft: '1rem', background: 'none', border: 'none', color: 'white', cursor: 'pointer', opacity: 0.8 }}
+                    >
+                        ✕
+                    </button>
+                </motion.div>
+            )}
+
             {/* IDLE STATE: Start Button */}
             {!isSessionActive && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', height: '100%', zIndex: 20 }}>
@@ -343,7 +401,7 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
                     >
                         <Mic size={32} />
                     </button>
-                    {error && <span className={styles.errorMessage} style={{ marginTop: '1rem' }}>{error}</span>}
+                    {/* Simplified error trigger for debugging if needed, but the main alert above handles it */}
                 </div>
             )}
 
