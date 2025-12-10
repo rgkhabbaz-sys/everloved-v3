@@ -85,14 +85,14 @@ const VoiceSession: React.FC<VoiceSessionProps> = ({ onEndSession, onSpeakingSta
         workletURL: "/vad.worklet.bundle.min.js",
         modelURL: "/silero_vad_legacy.onnx",
         onnxWASMPaths: {
-            'ort-wasm-simd-threaded.wasm': '/ort-wasm-simd-threaded.wasm',
-            'ort-wasm-simd.wasm': '/ort-wasm-simd.wasm',
-            'ort-wasm.wasm': '/ort-wasm.wasm',
-            'ort-wasm-threaded.wasm': '/ort-wasm-threaded.wasm',
-            'ort-wasm-simd-threaded.mjs': '/ort-wasm-simd-threaded.mjs',
-            'ort-wasm-simd.mjs': '/ort-wasm-simd-threaded.mjs',
-            'ort-wasm.mjs': '/ort-wasm-simd-threaded.mjs',
-            'ort-wasm-threaded.mjs': '/ort-wasm-simd-threaded.mjs'
+            'ort-wasm-simd-threaded.wasm': '/_next/static/chunks/ort-wasm-simd-threaded.wasm',
+            'ort-wasm-simd.wasm': '/_next/static/chunks/ort-wasm-simd.wasm',
+            'ort-wasm.wasm': '/_next/static/chunks/ort-wasm.wasm',
+            'ort-wasm-threaded.wasm': '/_next/static/chunks/ort-wasm-threaded.wasm',
+            'ort-wasm-simd-threaded.mjs': '/_next/static/chunks/ort-wasm-simd-threaded.mjs',
+            'ort-wasm-simd.mjs': '/_next/static/chunks/ort-wasm-simd-threaded.mjs',
+            'ort-wasm.mjs': '/_next/static/chunks/ort-wasm-simd-threaded.mjs',
+            'ort-wasm-threaded.mjs': '/_next/static/chunks/ort-wasm-simd-threaded.mjs'
         },
         onSpeechStart: () => {
             if (!isSessionActive) return;

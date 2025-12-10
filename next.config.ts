@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
             from: path.join(process.cwd(), "node_modules/onnxruntime-web/dist/*.wasm"),
             to: "static/chunks/[name][ext]",
           },
+          {
+            from: path.join(process.cwd(), "public/ort-wasm-simd-threaded.mjs"),
+            to: "static/chunks/[name][ext]",
+          },
         ],
       })
     );
