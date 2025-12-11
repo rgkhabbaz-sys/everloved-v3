@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/copy-vad-assets.js && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -20,9 +20,11 @@
     "react-dom": "^19.2.1"
   },
   "devDependencies": {
+    "@types/copy-webpack-plugin": "^8.0.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "copy-webpack-plugin": "^13.0.1",
     "eslint": "^9",
     "eslint-config-next": "16.0.5",
     "typescript": "^5"
